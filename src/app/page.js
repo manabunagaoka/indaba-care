@@ -1,11 +1,10 @@
-// src/app/page.js
 "use client";
-import TestComponent from '../components/TestComponent';
+import IndabaCareApp from '../components/IndabaCareApp';
 
 export default function Home() {
   return (
     <main>
-      <TestComponent />
+      <IndabaCareApp />
     </main>
   );
 }

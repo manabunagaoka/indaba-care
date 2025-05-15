@@ -245,10 +245,10 @@ const IndabaCareApp = () => {
   const renderFeed = () => (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-coral-600 to-coral-500 p-4 shadow-sm flex justify-between items-center">
+      <div className="bg-blue-500 p-4 shadow-sm flex justify-between items-center">
         <div className="flex items-center">
           <div className="font-bold text-xl flex items-center text-white">
-            <img src="/images/indaba-logo.png" alt="Indaba Care Logo" className="h-10 w-auto mr-2" />
+            <img src="/images/indaba-logo.png" alt="Indaba Care Logo" className="h-10 w-auto mr-2" onError={(e) => e.target.src = "/api/placeholder/40/40"} />
             Indaba Care
           </div>
         </div>
@@ -276,7 +276,7 @@ const IndabaCareApp = () => {
           <button
             className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
               selectedMilestoneTab === 'all' 
-                ? 'bg-coral-500 text-white' 
+                ? 'bg-blue-500 text-white' 
                 : 'bg-gray-100 text-gray-600'
             }`}
             onClick={() => setSelectedMilestoneTab('all')}
@@ -306,13 +306,13 @@ const IndabaCareApp = () => {
           .map(item => (
             <div 
               key={item.id} 
-              className="flex items-start p-4 border-b border-gray-100 bg-white hover:bg-coral-50 cursor-pointer"
+              className="flex items-start p-4 border-b border-gray-100 bg-white hover:bg-blue-50 cursor-pointer"
               onClick={() => {
                 setActiveNewsItem(item);
                 setActiveScreen('newsDetail');
               }}
             >
-              <div className="w-10 h-10 rounded-full bg-coral-100 flex items-center justify-center text-xl">
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
                 {item.icon}
               </div>
               <div className="ml-3 flex-1">
@@ -339,7 +339,7 @@ const IndabaCareApp = () => {
                 </div>
               </div>
               {item.unread > 0 && (
-                <div className="w-5 h-5 bg-coral-500 rounded-full flex items-center justify-center ml-2">
+                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center ml-2">
                   <span className="text-xs text-white">{item.unread}</span>
                 </div>
               )}
@@ -355,7 +355,7 @@ const IndabaCareApp = () => {
     return (
       <div className="flex flex-col h-full bg-white">
         {/* Header */}
-        <div className="bg-gradient-to-r from-coral-600 to-coral-500 p-4 text-white flex items-center">
+        <div className="bg-blue-500 p-4 text-white flex items-center">
           <ChevronLeft 
             size={24} 
             className="cursor-pointer" 
@@ -402,19 +402,19 @@ const IndabaCareApp = () => {
           
           {/* Montessori Milestone Details */}
           {activeNewsItem.content.milestoneDetails && (
-            <div className="bg-coral-50 p-4 rounded-lg mb-4 border-l-4 border-coral-500 relative">
-              <h3 className="font-medium text-coral-800 mb-2">Montessori Developmental Milestone</h3>
+            <div className="bg-blue-50 p-4 rounded-lg mb-4 border-l-4 border-blue-500 relative">
+              <h3 className="font-medium text-blue-800 mb-2">Montessori Developmental Milestone</h3>
               <div className="space-y-2">
                 <div>
-                  <span className="font-medium text-coral-700">Area: </span>
+                  <span className="font-medium text-blue-700">Area: </span>
                   <span className="text-gray-700">{activeNewsItem.content.milestoneDetails.area}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-coral-700">Skill: </span>
+                  <span className="font-medium text-blue-700">Skill: </span>
                   <span className="text-gray-700">{activeNewsItem.content.milestoneDetails.skill}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-coral-700">Next Development Steps: </span>
+                  <span className="font-medium text-blue-700">Next Development Steps: </span>
                   <span className="text-gray-700">{activeNewsItem.content.milestoneDetails.nextSteps}</span>
                 </div>
               </div>
@@ -422,7 +422,7 @@ const IndabaCareApp = () => {
                 className="absolute top-2 right-2 p-1 rounded-full bg-white shadow-sm"
                 onClick={() => setActiveScreen('feed')}
               >
-                <ChevronLeft size={16} className="text-coral-700" />
+                <ChevronLeft size={16} className="text-blue-700" />
               </button>
             </div>
           )}
@@ -582,7 +582,7 @@ const IndabaCareApp = () => {
               <Smile size={18} className="text-gray-400 cursor-pointer" />
               <Paperclip size={18} className="text-gray-400 cursor-pointer" />
               <Camera size={18} className="text-gray-400 cursor-pointer" />
-              <Send size={18} className="text-coral-600 cursor-pointer" />
+              <Send size={18} className="text-blue-600 cursor-pointer" />
             </div>
           </div>
         </div>
@@ -593,15 +593,15 @@ const IndabaCareApp = () => {
   const renderHome = () => (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-coral-600 to-coral-500 p-6 flex flex-col items-center text-white">
+      <div className="bg-blue-500 p-6 flex flex-col items-center text-white">
         <div className="font-bold text-2xl flex items-center mb-4">
-          <img src="/images/indaba-logo.png" alt="Indaba Care Logo" className="h-12 w-auto mr-3" />
+          <img src="/images/indaba-logo.png" alt="Indaba Care Logo" className="h-12 w-auto mr-3" onError={(e) => e.target.src = "/api/placeholder/50/50"} />
           Indaba Care
         </div>
         <p className="text-center text-white mb-4">
           Connecting parents and caregivers through the Montessori journey
         </p>
-        <button className="bg-white text-coral-600 px-4 py-2 rounded-full font-medium text-sm hover:bg-mint-100 transition-colors">
+        <button className="bg-white text-blue-600 px-4 py-2 rounded-full font-medium text-sm hover:bg-blue-100 transition-colors">
           Connect with Your Child's Caregiver
         </button>
       </div>
@@ -633,7 +633,7 @@ const IndabaCareApp = () => {
           <div className="space-y-3">
             {chatItems.slice(0, 3).map(item => (
               <div key={item.id} className="flex border-b border-gray-100 pb-3">
-                <div className="w-10 h-10 rounded-full bg-coral-100 flex items-center justify-center text-xl">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl">
                   {item.icon}
                 </div>
                 <div className="ml-3">
@@ -656,7 +656,7 @@ const IndabaCareApp = () => {
               </div>
             ))}
             <button 
-              className="w-full text-coral-500 text-center py-2 font-medium text-sm hover:text-coral-600 transition-colors"
+              className="w-full text-blue-500 text-center py-2 font-medium text-sm hover:text-blue-600 transition-colors"
               onClick={() => setActiveScreen('feed')}
             >
               View All Updates
@@ -689,9 +689,9 @@ const IndabaCareApp = () => {
   const renderProfile = () => (
     <div className="flex flex-col h-full bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-coral-600 to-coral-500 p-6 flex flex-col items-center text-white">
+      <div className="bg-blue-500 p-6 flex flex-col items-center text-white">
         <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mb-3">
-          <User size={40} className="text-coral-500" />
+          <User size={40} className="text-blue-500" />
         </div>
         <h2 className="font-bold text-xl">Sarah Johnson</h2>
         <p className="text-sm text-white opacity-90">Parent of Emma (10 months)</p>
@@ -724,7 +724,7 @@ const IndabaCareApp = () => {
             <h3 className="font-medium text-gray-800">Child Information</h3>
           </div>
           <div className="p-4 flex items-start border-b border-gray-100">
-            <div className="w-10 h-10 rounded-full bg-coral-100 flex items-center justify-center text-xl mr-3">
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-xl mr-3">
               👶
             </div>
             <div>
@@ -740,7 +740,7 @@ const IndabaCareApp = () => {
               </div>
             </div>
           </div>
-          <div className="p-4 text-coral-500 text-center font-medium text-sm hover:text-coral-600 cursor-pointer">
+          <div className="p-4 text-blue-500 text-center font-medium text-sm hover:text-blue-600 cursor-pointer">
             Add Another Child
           </div>
         </div>
@@ -762,7 +762,7 @@ const IndabaCareApp = () => {
         </div>
         
         <div className="mt-4 text-center">
-          <button className="text-coral-500 font-medium hover:text-coral-600">
+          <button className="text-blue-500 font-medium hover:text-blue-600">
             Sign Out
           </button>
         </div>
@@ -783,21 +783,21 @@ const IndabaCareApp = () => {
       {activeScreen !== 'newsDetail' && (
         <div className="bg-white border-t border-gray-200 flex justify-around p-4">
           <button 
-            className={`flex flex-col items-center ${activeScreen === 'home' ? 'text-coral-600' : 'text-gray-400'}`}
+            className={`flex flex-col items-center ${activeScreen === 'home' ? 'text-blue-600' : 'text-gray-400'}`}
             onClick={() => setActiveScreen('home')}
           >
             <Home size={24} />
             <span className="text-xs mt-1">Home</span>
           </button>
           <button 
-            className={`flex flex-col items-center ${activeScreen === 'feed' ? 'text-coral-600' : 'text-gray-400'}`}
+            className={`flex flex-col items-center ${activeScreen === 'feed' ? 'text-blue-600' : 'text-gray-400'}`}
             onClick={() => setActiveScreen('feed')}
           >
             <MessageCircle size={24} />
             <span className="text-xs mt-1">Feed</span>
           </button>
           <button 
-            className={`flex flex-col items-center ${activeScreen === 'profile' ? 'text-coral-600' : 'text-gray-400'}`}
+            className={`flex flex-col items-center ${activeScreen === 'profile' ? 'text-blue-600' : 'text-gray-400'}`}
             onClick={() => setActiveScreen('profile')}
           >
             <User size={24} />
