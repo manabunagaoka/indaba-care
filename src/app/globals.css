@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --color-dark-gray: #4D4D4D;
+  --color-coral: #FF6B6B;
+  --color-peach: #FFBEAB;
+  --color-pink-light: #FFD6CC;
+  --color-mauve: #D99B9B;
+  --color-teal: #40BFBF;
+  --color-yellow: #FFD166;
+}
+
+body {
+  color: var(--color-dark-gray);
+  background-color: #f8f8f8;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-dark-gray);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#FF6B6B] text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors;
+  }
+  
+  .btn-secondary {
+    @apply bg-[#40BFBF] text-white px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors;
+  }
+  
+  .card {
+    @apply bg-white p-4 rounded-lg shadow-sm;
+  }
+  
+  .tag {
+    @apply text-xs px-2 py-0.5 rounded-full;
+  }
+}
