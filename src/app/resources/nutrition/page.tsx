@@ -1,8 +1,10 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Home, BookOpen, Play, Search, User, ChevronDown, ChevronUp, ArrowLeft, CheckCircle, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { AnimatePresence } from 'framer-motion';
+import ResourceTransition from '../../../components/resources/ResourceTransition';
 
 // Sample lesson content for the Nutrition Fundamentals module
 const NutritionFundamentalsLesson = () => {
@@ -293,85 +295,89 @@ const ModuleCard = ({ moduleId, courseId, title, description, duration, complete
 };
 
 // Page to display the lesson content when a module is selected
-const LessonPage = ({ handleBackToModules }) => {
+const LessonPage = ({ handleBackToModules, direction }) => {
   const router = useRouter();
   
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Add custom animation to global styles */}
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
-        }
-      `}</style>
-      
-      {/* Header - White with subtle Yellow accents */}
-      <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
-        <div className="flex items-center">
-          <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
-            <img 
-              src="/images/indabacarelogo.jpg" 
-              alt="Indaba Care Logo" 
-              className="h-10 w-auto object-contain" 
-              onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
-            />
+    <AnimatePresence mode="wait">
+      <ResourceTransition direction={direction}>
+        <div className="flex flex-col h-screen bg-gray-50">
+          {/* Add custom animation to global styles */}
+          <style jsx global>{`
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            
+            .animate-fadeIn {
+              animation: fadeIn 0.5s ease-out forwards;
+            }
+          `}</style>
+          
+          {/* Header - White with subtle Yellow accents */}
+          <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
+            <div className="flex items-center">
+              <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
+                <img 
+                  src="/images/indabacarelogo.jpg" 
+                  alt="Indaba Care Logo" 
+                  className="h-10 w-auto object-contain" 
+                  onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
+                />
+              </div>
+              <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
+            </div>
+            <div className="flex items-center">
+              <User size={20} className="mr-2 text-[#4D4D4D]" />
+              <span className="text-[#4D4D4D]">manabunagaoka</span>
+            </div>
           </div>
-          <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
-        </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">manabunagaoka</span>
-        </div>
-      </div>
 
-      {/* Page Header with back button - no icon */}
-      <div className="bg-white p-4 border-b flex items-center">
-        <button 
-          onClick={handleBackToModules}
-          className="mr-2 text-gray-500 hover:text-[#4D4D4D] transition-colors"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-xl font-bold text-[#4D4D4D]">Nutrition & Meal Preparation</h1>
-      </div>
-      
-      {/* Lesson Content */}
-      <div className="flex-1 overflow-auto py-4 px-4 md:px-8 animate-fadeIn">
-        <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <NutritionFundamentalsLesson />
-        </div>
-      </div>
+          {/* Page Header with back button - no icon */}
+          <div className="bg-white p-4 border-b flex items-center">
+            <button 
+              onClick={handleBackToModules}
+              className="mr-2 text-gray-500 hover:text-[#4D4D4D] transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-xl font-bold text-[#4D4D4D]">Nutrition & Meal Preparation</h1>
+          </div>
+          
+          {/* Lesson Content */}
+          <div className="flex-1 overflow-auto py-4 px-4 md:px-8 animate-fadeIn">
+            <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <NutritionFundamentalsLesson />
+            </div>
+          </div>
 
-      {/* Fixed Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/home')}
-        >
-          <Home size={20} />
-          <span className="text-xs mt-1">Home</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/fun')}
-        >
-          <Play size={20} />
-          <span className="text-xs mt-1">Fun</span>
-        </button>
-        <button 
-          className="flex flex-col items-center"
-          onClick={() => router.push('/resources')}
-        >
-          <BookOpen size={20} className="text-[#FFD166]" />
-          <span className="text-xs mt-1 text-white">Resources</span>
-        </button>
-      </div>
-    </div>
+          {/* Fixed Bottom Navigation */}
+          <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
+            <button 
+              className="flex flex-col items-center text-gray-300"
+              onClick={() => router.push('/home')}
+            >
+              <Home size={20} />
+              <span className="text-xs mt-1">Home</span>
+            </button>
+            <button 
+              className="flex flex-col items-center text-gray-300"
+              onClick={() => router.push('/fun')}
+            >
+              <Play size={20} />
+              <span className="text-xs mt-1">Fun</span>
+            </button>
+            <button 
+              className="flex flex-col items-center"
+              onClick={() => router.push('/resources')}
+            >
+              <BookOpen size={20} className="text-[#FFD166]" />
+              <span className="text-xs mt-1 text-white">Resources</span>
+            </button>
+          </div>
+        </div>
+      </ResourceTransition>
+    </AnimatePresence>
   );
 };
 
@@ -379,6 +385,19 @@ export default function NutritionCourse() {
   const [expandedModules, setExpandedModules] = useState(new Set(['nutrition-fundamentals']));
   const [showingLesson, setShowingLesson] = useState(false);
   const router = useRouter();
+  
+  // Add state for slide animation direction
+  const [direction, setDirection] = useState<'left-to-right'|'right-to-left'>('right-to-left');
+  
+  // Check for navigation direction when component loads
+  useEffect(() => {
+    // Check if we're navigating within resources section
+    const navDirection = sessionStorage.getItem('resourceNavDirection');
+    if (navDirection) {
+      setDirection(navDirection as 'left-to-right'|'right-to-left');
+      sessionStorage.removeItem('resourceNavDirection');
+    }
+  }, []);
   
   // Toggle specific module expansion
   const toggleModule = (moduleId) => {
@@ -403,6 +422,13 @@ export default function NutritionCourse() {
     // Update state
     setExpandedModules(newExpanded);
   };
+  
+  // Modified back button handler to set direction for animation
+  const handleBackToResourcesCatalog = () => {
+  // Store that we're going back for the animation
+  sessionStorage.setItem('resourceNavDirection', 'left-to-right'); // This sets the correct direction
+  router.push('/resources');
+};
   
   // Example modules for Nutrition course
   const nutritionModules = [
@@ -455,128 +481,132 @@ export default function NutritionCourse() {
   
   // If showing a lesson, render the lesson page
   if (showingLesson) {
-    return <LessonPage handleBackToModules={handleBackToModules} />;
+    return <LessonPage handleBackToModules={handleBackToModules} direction={direction} />;
   }
 
   // Otherwise, show the course modules view
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Add custom animation to global styles */}
-      <style jsx global>{`
-        @keyframes slideDown {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-slideDown {
-          animation: slideDown 0.3s ease-out forwards;
-        }
-      `}</style>
-      
-      {/* Header - White with subtle Yellow accents */}
-      <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
-        <div className="flex items-center">
-          <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
-            <img 
-              src="/images/indabacarelogo.jpg" 
-              alt="Indaba Care Logo" 
-              className="h-10 w-auto object-contain" 
-              onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
-            />
-          </div>
-          <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
-        </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">manabunagaoka</span>
-        </div>
-      </div>
-
-      {/* Page Header with back button and no icon */}
-      <div className="bg-white p-4 border-b flex items-center">
-        <button 
-          onClick={() => router.push('/resources')}
-          className="mr-2 text-gray-500 hover:text-[#4D4D4D] transition-colors"
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-xl font-bold text-[#4D4D4D]">Nutrition & Meal Preparation</h1>
-      </div>
-
-      {/* All content in a scrollable container */}
-      <div className="flex-1 overflow-auto pb-20">
-        {/* Course Modules - moved up, overview now inline */}
-        <div className="p-4">
-          {/* Course overview with larger icon and distinct background */}
-          <div className="bg-gradient-to-r from-orange-50 to-white p-4 rounded-lg shadow-sm border-2 border-[#FF8C42] mb-6">
+    <AnimatePresence mode="wait">
+      <ResourceTransition direction={direction}>
+        <div className="flex flex-col h-screen bg-gray-50">
+          {/* Add custom animation to global styles */}
+          <style jsx global>{`
+            @keyframes slideDown {
+              from { opacity: 0; transform: translateY(-10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .animate-slideDown {
+              animation: slideDown 0.3s ease-out forwards;
+            }
+          `}</style>
+          
+          {/* Header - White with subtle Yellow accents */}
+          <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
             <div className="flex items-center">
-              <div className="flex-shrink-0 w-16 h-16 bg-white rounded-full mr-4 flex items-center justify-center shadow-md border-2 border-[#FF8C42]">
-                <NutritionIcon />
+              <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
+                <img 
+                  src="/images/indabacarelogo.jpg" 
+                  alt="Indaba Care Logo" 
+                  className="h-10 w-auto object-contain" 
+                  onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
+                />
               </div>
-              <div>
-                <div className="flex items-center mb-1">
-                  <h2 className="text-lg font-medium text-[#4D4D4D]">Course Overview</h2>
-                  <div className="ml-3 px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs">In Progress</div>
+              <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
+            </div>
+            <div className="flex items-center">
+              <User size={20} className="mr-2 text-[#4D4D4D]" />
+              <span className="text-[#4D4D4D]">manabunagaoka</span>
+            </div>
+          </div>
+
+          {/* Page Header with back button and no icon */}
+          <div className="bg-white p-4 border-b flex items-center">
+            <button 
+              onClick={handleBackToResourcesCatalog}
+              className="mr-2 text-gray-500 hover:text-[#4D4D4D] transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-xl font-bold text-[#4D4D4D]">Nutrition & Meal Preparation</h1>
+          </div>
+
+          {/* All content in a scrollable container */}
+          <div className="flex-1 overflow-auto pb-20">
+            {/* Course Modules - moved up, overview now inline */}
+            <div className="p-4">
+              {/* Course overview with larger icon and distinct background */}
+              <div className="bg-gradient-to-r from-orange-50 to-white p-4 rounded-lg shadow-sm border-2 border-[#FF8C42] mb-6">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 w-16 h-16 bg-white rounded-full mr-4 flex items-center justify-center shadow-md border-2 border-[#FF8C42]">
+                    <NutritionIcon />
+                  </div>
+                  <div>
+                    <div className="flex items-center mb-1">
+                      <h2 className="text-lg font-medium text-[#4D4D4D]">Course Overview</h2>
+                      <div className="ml-3 px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs">In Progress</div>
+                    </div>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <span className="mr-3">Intermediate</span>
+                      <span>2-3 hours total</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      Learn about child nutrition, healthy food practices, and how to involve children in food preparation 
+                      based on Montessori principles as outlined in the CoRE Nanny Training Manual.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center text-xs text-gray-500">
-                  <span className="mr-3">Intermediate</span>
-                  <span>2-3 hours total</span>
-                </div>
-                <p className="text-sm text-gray-600 mt-2">
-                  Learn about child nutrition, healthy food practices, and how to involve children in food preparation 
-                  based on Montessori principles as outlined in the CoRE Nanny Training Manual.
-                </p>
+              </div>
+              
+              <h2 className="text-lg font-medium text-[#4D4D4D] mb-4">Course Modules</h2>
+              
+              {/* Display nutrition modules */}
+              {nutritionModules.map(module => (
+                <ModuleCard
+                  key={module.id}
+                  moduleId={module.id}
+                  courseId="nutrition"
+                  title={module.title}
+                  description={module.description}
+                  duration={module.duration}
+                  completed={module.completed}
+                  isExpanded={expandedModules.has(module.id)}
+                  onToggle={() => toggleModule(module.id)}
+                />
+              ))}
+              
+              <div className="text-center text-xs text-gray-500 mt-4 mb-8">
+                Complete all modules to earn your Nutrition & Meal Preparation certificate.
               </div>
             </div>
           </div>
-          
-          <h2 className="text-lg font-medium text-[#4D4D4D] mb-4">Course Modules</h2>
-          
-          {/* Display nutrition modules */}
-          {nutritionModules.map(module => (
-            <ModuleCard
-              key={module.id}
-              moduleId={module.id}
-              courseId="nutrition"
-              title={module.title}
-              description={module.description}
-              duration={module.duration}
-              completed={module.completed}
-              isExpanded={expandedModules.has(module.id)}
-              onToggle={() => toggleModule(module.id)}
-            />
-          ))}
-          
-          <div className="text-center text-xs text-gray-500 mt-4 mb-8">
-            Complete all modules to earn your Nutrition & Meal Preparation certificate.
+
+          {/* Fixed Bottom Navigation */}
+          <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
+            <button 
+              className="flex flex-col items-center text-gray-300"
+              onClick={() => router.push('/home')}
+            >
+              <Home size={20} />
+              <span className="text-xs mt-1">Home</span>
+            </button>
+            <button 
+              className="flex flex-col items-center text-gray-300"
+              onClick={() => router.push('/fun')}
+            >
+              <Play size={20} />
+              <span className="text-xs mt-1">Fun</span>
+            </button>
+            <button 
+              className="flex flex-col items-center"
+              onClick={() => router.push('/resources')}
+            >
+              <BookOpen size={20} className="text-[#FFD166]" />
+              <span className="text-xs mt-1 text-white">Resources</span>
+            </button>
           </div>
         </div>
-      </div>
-
-      {/* Fixed Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/home')}
-        >
-          <Home size={20} />
-          <span className="text-xs mt-1">Home</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/fun')}
-        >
-          <Play size={20} />
-          <span className="text-xs mt-1">Fun</span>
-        </button>
-        <button 
-          className="flex flex-col items-center"
-          onClick={() => router.push('/resources')}
-        >
-          <BookOpen size={20} className="text-[#FFD166]" />
-          <span className="text-xs mt-1 text-white">Resources</span>
-        </button>
-      </div>
-    </div>
+      </ResourceTransition>
+    </AnimatePresence>
   );
 }

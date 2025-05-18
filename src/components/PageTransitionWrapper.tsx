@@ -24,24 +24,24 @@ export default function SplashPage() {
 
   return (
     <motion.div 
-      className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50"
-      initial={{ opacity: 1 }}
-      animate={{ 
-        opacity: isRedirecting ? 0 : 1,
-        transition: { duration: 0.5 }
-      }}
+      className="fixed inset-0 flex flex-col items-center justify-center bg-[#1A1A1A] z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
       <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ 
-          scale: 1, 
-          opacity: 1,
-          transition: { duration: 0.5 }
-        }}
-        className="flex flex-col items-center"
+        className={`flex flex-col items-center transition-opacity duration-500 ${isRedirecting ? 'opacity-0' : 'opacity-100'}`}
       >
-        {/* Logo */}
-        <motion.div className="mb-6">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ 
+            scale: 1, 
+            opacity: 1,
+            transition: { duration: 0.5 }
+          }}
+          className="mb-6"
+        >
           <Image 
             src="/images/indabacarelogo.jpg" 
             alt="Indaba Care Logo" 
@@ -52,7 +52,7 @@ export default function SplashPage() {
         </motion.div>
         
         <motion.h1 
-          className="text-3xl font-bold text-[#2D2D2D] mb-2"
+          className="text-3xl font-bold text-white mb-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ 
             opacity: 1, 
@@ -71,12 +71,12 @@ export default function SplashPage() {
             transition: { delay: 0.6, duration: 0.5 }
           }}
         >
-          Transforming Childcare, Together.
+          Empowering childcare through community
         </motion.p>
         
         {/* Optional loading indicator */}
         <motion.div 
-          className="mt-12 w-16 h-1 bg-gray-200 rounded-full overflow-hidden"
+          className="mt-12 w-16 h-1 bg-gray-700 rounded-full overflow-hidden"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}

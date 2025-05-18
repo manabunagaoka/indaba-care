@@ -1,15 +1,19 @@
-import Link from 'next/link';
-import { ReactNode } from 'react';
+'use client';
 
-type CourseCardProps = {
+import React from 'react';
+import Link from 'next/link';
+import { ChevronRight, Star } from 'lucide-react';
+
+interface CourseCardProps {
   title: string;
   description: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   bgColor: string;
   href: string;
   lessonCount: number;
   isPremium?: boolean;
-};
+  onClick?: () => void;
+}
 
 export const CourseCard = ({
   title,
@@ -18,27 +22,67 @@ export const CourseCard = ({
   bgColor,
   href,
   lessonCount,
-  isPremium = false
+  isPremium = false,
+  onClick
 }: CourseCardProps) => {
-  return (
-    <Link href={href} className="block h-full">
-      <div className={`h-full rounded-lg shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-md ${isPremium ? 'border-l-4 border-l-[#FFD166]' : ''}`}>
-        <div className={`${bgColor} p-6 flex items-start`}>
-          <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mr-4 flex-shrink-0 shadow-sm">
+  // If onClick is provided, use a div instead of Link
+  if (onClick) {
+    return (
+      <div 
+        className={`rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer`}
+        onClick={onClick}
+      >
+        <div className={`${bgColor} p-5 flex justify-between items-start`}>
+          <div className="bg-white rounded-full p-2">
             {icon}
           </div>
-          <div>
-            <h3 className="font-semibold text-lg text-white mb-1">{title}</h3>
-            <p className="text-sm text-white/80 line-clamp-2">{description}</p>
+          
+          {isPremium && (
+            <div className="bg-white text-[#F5B041] rounded-full p-1 flex items-center text-xs">
+              <Star size={14} className="mr-1 fill-[#F5B041] text-[#F5B041]" />
+              Premium
+            </div>
+          )}
+        </div>
+        
+        <div className="p-4 bg-white">
+          <h3 className="font-semibold text-[#4D4D4D] mb-2">{title}</h3>
+          <p className="text-gray-500 text-sm mb-3 line-clamp-2">{description}</p>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-gray-400">{lessonCount} lessons</span>
+            <ChevronRight size={18} className="text-gray-400" />
           </div>
         </div>
-        <div className="p-4 bg-white flex justify-between items-center">
-          <span className="text-sm text-gray-500">{lessonCount} lessons</span>
+      </div>
+    );
+  }
+  
+  // Default behavior with Link
+  return (
+    <Link href={href} passHref>
+      <div className={`rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer`}>
+        <div className={`${bgColor} p-5 flex justify-between items-start`}>
+          <div className="bg-white rounded-full p-2">
+            {icon}
+          </div>
+          
           {isPremium && (
-            <span className="text-xs bg-[#FFD166] text-[#4D4D4D] px-2 py-1 rounded-full font-medium">
+            <div className="bg-white text-[#F5B041] rounded-full p-1 flex items-center text-xs">
+              <Star size={14} className="mr-1 fill-[#F5B041] text-[#F5B041]" />
               Premium
-            </span>
+            </div>
           )}
+        </div>
+        
+        <div className="p-4 bg-white">
+          <h3 className="font-semibold text-[#4D4D4D] mb-2">{title}</h3>
+          <p className="text-gray-500 text-sm mb-3 line-clamp-2">{description}</p>
+          
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-gray-400">{lessonCount} lessons</span>
+            <ChevronRight size={18} className="text-gray-400" />
+          </div>
         </div>
       </div>
     </Link>

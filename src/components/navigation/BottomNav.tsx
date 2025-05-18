@@ -3,6 +3,8 @@
 import { Home, MessageCircle, BookOpen, Play } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
 
+// No changes to your original component - this integration will work
+// with the current implementation
 export default function BottomNav() {
   const pathname = usePathname()
   const router = useRouter()
