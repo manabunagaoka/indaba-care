@@ -2,31 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { Search, User, Home, BookOpen, Play } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
-import { AnimatePresence } from 'framer-motion';
-import ResourceTransition from '../../components/resources/ResourceTransition';
+import { useRouter } from 'next/navigation';
 import { CourseCard } from '../../components/CourseCard';
 
 export default function ResourcesCatalogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
-  const pathname = usePathname();
   const currentUser = 'manabunagaoka';
-  const currentTime = '2025-05-18 02:49:24';
-  
-  // Use more explicit boolean state for animation direction
-  const [isReturningToParent, setIsReturningToParent] = useState(false);
-  
-  useEffect(() => {
-    // Using a more explicit name for the session storage key
-    const isReturning = sessionStorage.getItem('isReturningToParent') === 'true';
-    setIsReturningToParent(isReturning);
-    sessionStorage.removeItem('isReturningToParent');
-  }, [pathname]); // Depend on pathname to catch navigation changes
+  const currentTime = '2025-05-19 01:16:48';
 
   const handleCardClick = (path: string) => {
-    // When going to a child page, we're not returning to parent
-    sessionStorage.setItem('isReturningToParent', 'false');
+    // No need to set any flag, the layout will detect direction change
     router.push(path);
   };
 
@@ -143,92 +129,97 @@ export default function ResourcesCatalogPage() {
   );
 
   return (
-    <AnimatePresence mode="wait">
-      <ResourceTransition isReturningToParent={isReturningToParent}>
-        <div className="flex flex-col h-screen bg-gray-50">
-          {/* Header */}
-          <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
-            <div className="flex items-center">
-              <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
-                <img 
-                  src="/images/indabacarelogo.jpg" 
-                  alt="Indaba Care Logo" 
-                  className="h-10 w-auto object-contain" 
-                  onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
-                />
-              </div>
-              <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
-            </div>
-            <div className="flex items-center">
-              <User size={20} className="mr-2 text-[#4D4D4D]" />
-              <span className="text-[#4D4D4D]">{currentUser}</span>
-            </div>
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
+        <div className="flex items-center">
+          <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
+            <img 
+              src="/images/indabacarelogo.jpg" 
+              alt="Indaba Care Logo" 
+              className="h-10 w-auto object-contain" 
+              onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
+            />
           </div>
-
-          {/* Page Header with Search */}
-          <div className="bg-white p-4 border-b flex justify-between items-center">
-            <h1 className="text-xl font-bold text-[#4D4D4D]">Learning Resources</h1>
-            
-            <div className="relative w-64">
-              <input
-                type="text"
-                placeholder="Search courses..."
-                className="w-full py-1.5 pl-8 pr-3 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#FFD166] text-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Search className="absolute left-2.5 top-2 text-gray-400" size={16} />
-            </div>
-          </div>
-
-          {/* Courses Grid */}
-          <div className="flex-1 overflow-auto pb-20 px-4 pt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredCourses.map((course) => (
-                <div key={course.id} onClick={() => handleCardClick(`/resources/${course.id}`)}>
-                  <CourseCard
-                    title={course.title}
-                    description={course.description}
-                    icon={course.icon}
-                    bgColor={course.bgColor}
-                    href={`/resources/${course.id}`}
-                    lessonCount={course.lessonCount}
-                    isPremium={course.isPremium}
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {filteredCourses.length === 0 && (
-              <div className="text-center py-10">
-                <p className="text-gray-500">No courses found matching "{searchTerm}"</p>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Navigation */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-            <button 
-              className="flex flex-col items-center text-gray-300"
-              onClick={() => router.push('/home')}
-            >
-              <Home size={20} />
-              <span className="text-xs mt-1">Home</span>
-            </button>
-            <button 
-              className="flex flex-col items-center text-gray-300"
-              onClick={() => router.push('/fun')}
-            >
-              <Play size={20} />
-              <span className="text-xs mt-1">Fun</span>
-            </button>
-            <button className="flex flex-col items-center">
-              <BookOpen size={20} className="text-[#FFD166]" />
-              <span className="text-xs mt-1 text-white">Resources</span>
-            </button>
-          </div>
+          <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
         </div>
-      </ResourceTransition>
-    </AnimatePresence>
+        <div className="flex items-center">
+          <User size={20} className="mr-2 text-[#4D4D4D]" />
+          <span className="text-[#4D4D4D]">{currentUser}</span>
+        </div>
+      </div>
+
+      {/* Page Header with Search */}
+      <div className="bg-white p-4 border-b flex justify-between items-center">
+        <h1 className="text-xl font-bold text-[#4D4D4D]">Learning Resources</h1>
+        
+        <div className="relative w-64">
+          <input
+            type="text"
+            placeholder="Search courses..."
+            className="w-full py-1.5 pl-8 pr-3 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#FFD166] text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Search className="absolute left-2.5 top-2 text-gray-400" size={16} />
+        </div>
+      </div>
+
+      {/* Courses Grid */}
+      <div className="flex-1 overflow-auto pb-20 px-4 pt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCourses.map((course) => (
+            <div key={course.id}>
+              <CourseCard
+                title={course.title}
+                description={course.description}
+                icon={course.icon}
+                bgColor={course.bgColor}
+                href={`/resources/${course.id}`}
+                lessonCount={course.lessonCount}
+                isPremium={course.isPremium}
+                onClick={() => handleCardClick(`/resources/${course.id}`)}
+              />
+            </div>
+          ))}
+        </div>
+        
+        {filteredCourses.length === 0 && (
+          <div className="text-center py-10">
+            <p className="text-gray-500">No courses found matching "{searchTerm}"</p>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
+        <button 
+          className="flex flex-col items-center text-gray-300"
+          onClick={() => {
+            // Flag to prevent animation when coming from other tabs
+            sessionStorage.setItem('majorTabSwitch', 'true');
+            router.push('/home');
+          }}
+        >
+          <Home size={20} />
+          <span className="text-xs mt-1">Home</span>
+        </button>
+        <button 
+          className="flex flex-col items-center text-gray-300"
+          onClick={() => {
+            // Flag to prevent animation when coming from other tabs
+            sessionStorage.setItem('majorTabSwitch', 'true');
+            router.push('/fun');
+          }}
+        >
+          <Play size={20} />
+          <span className="text-xs mt-1">Fun</span>
+        </button>
+        <button className="flex flex-col items-center">
+          <BookOpen size={20} className="text-[#FFD166]" />
+          <span className="text-xs mt-1 text-white">Resources</span>
+        </button>
+      </div>
+    </div>
   );
 }
