@@ -106,7 +106,7 @@ const sampleFeedItems: Post[] = [
     id: 1,
     text: "IMPORTANT: We're excited to announce our upcoming parent-educator conference on May 25th. Please check your email for schedule details and confirmation. Contact us if you haven't received your invitation.",
     timestamp: "2025-05-16 10:30:00",
-    images: ["/api/placeholder/600/400"],
+    images: ["/images/post-admin-conference.jpg"],
     videos: [],
     user: "Indaba Admin",
     userRole: "Administrator",
@@ -127,7 +127,7 @@ const sampleFeedItems: Post[] = [
     id: 3,
     text: "Lucas built an impressive tower with the wooden blocks today. He demonstrated excellent spatial awareness and patience, carefully balancing each block. This activity is helping develop his hand-eye coordination and concentration.",
     timestamp: "2025-05-15 20:30:05",
-    images: ["/api/placeholder/600/400"],
+    images: ["/images/post-blocks-tower.jpg"],
     videos: [],
     user: "manabunagaoka",
     userRole: "Caregiver",
@@ -147,7 +147,7 @@ const sampleFeedItems: Post[] = [
     id: 5,
     text: "You've been subscribed to the Early Literacy Program! Each week, you'll receive age-appropriate book recommendations and literacy activities to enjoy with your child.",
     timestamp: "2025-05-15 15:20:15",
-    images: ["/api/placeholder/600/400"],
+    images: ["/images/post-early-literacy.jpg"],
     videos: [],
     user: "Indaba Services",
     userRole: "Service",
@@ -324,7 +324,7 @@ export default function HomePage() {
     if (e.target.files && e.target.files.length > 0) {
       setNewPost({
         ...newPost,
-        images: [...newPost.images, "/api/placeholder/600/400"]
+        images: [...newPost.images, "/images/post-blocks-tower.jpg"]
       });
     }
   };
@@ -334,7 +334,7 @@ export default function HomePage() {
     if (e.target.files && e.target.files.length > 0) {
       setNewPost({
         ...newPost,
-        videos: [...newPost.videos, "/api/placeholder/400/300"]
+        videos: [...newPost.videos, "/videos/placeholder-video.mp4"]
       });
     }
   };
@@ -439,7 +439,7 @@ export default function HomePage() {
               alt="Indaba Care Logo" 
               style={{ height: '2.5rem', width: 'auto', objectFit: 'contain' }}
               onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                e.currentTarget.src = "/api/placeholder/50/50";
+                e.currentTarget.src = "/images/fallback-logo.jpg";
               }} 
             />
           </div>
