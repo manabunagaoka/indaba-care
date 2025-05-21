@@ -1,277 +1,472 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { Mic, Camera, Image as ImageIcon, Smile, Send, X, Plus, User, Home, BookOpen, Play } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useRef, ChangeEvent, MouseEvent } from 'react';
+import { Mic, Camera, Send, X, Plus, User, Home, BookOpen, Play, Calendar, Bell, Video } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-// Montessori badge types
-type BadgeType = 'practical-life' | 'sensorial' | 'language' | 'mathematics' | 'cultural' | 'social-emotional' | 'physical';
+// Post types
+type PostType = 'admin' | 'employer' | 'nanny' | 'subscription';
 
-// Badge component
-const MontessoriBadge = ({ type, size = 'small', age = '0+' }: { type: BadgeType, size?: 'small' | 'medium', age?: string }) => {
-  const icons = {
-    'practical-life': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M15 5L17 7M17 7L19 9M17 7L19 5M17 7L15 9" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M8.5 9C8.5 7.6 7.4 6.5 6 6.5C4.6 6.5 3.5 7.6 3.5 9C3.5 10.4 4.6 11.5 6 11.5H8.5V9Z" stroke="#FF6B6B" strokeWidth="2"/>
-        <path d="M8.5 9C8.5 7.6 9.6 6.5 11 6.5C12.4 6.5 13.5 7.6 13.5 9C13.5 10.4 12.4 11.5 11 11.5H8.5V9Z" stroke="#FF6B6B" strokeWidth="2"/>
-        <path d="M8.5 14.5C8.5 13.1 7.4 12 6 12C4.6 12 3.5 13.1 3.5 14.5C3.5 15.9 4.6 17 6 17H8.5V14.5Z" stroke="#FF6B6B" strokeWidth="2"/>
-        <path d="M8.5 14.5C8.5 13.1 9.6 12 11 12C12.4 12 13.5 13.1 13.5 14.5C13.5 15.9 12.4 17 11 17H8.5V14.5Z" stroke="#FF6B6B" strokeWidth="2"/>
-        <path d="M13.5 14.5C13.5 13.1 14.6 12 16 12C17.4 12 18.5 13.1 18.5 14.5C18.5 15.9 17.4 17 16 17H13.5V14.5Z" stroke="#FF6B6B" strokeWidth="2"/>
-      </svg>
-    ),
-    'sensorial': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 5V19" stroke="#FFD166" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M5 12H19" stroke="#FFD166" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" fill="#FFD166"/>
-        <circle cx="12" cy="19" r="2" fill="#FFD166"/>
-        <circle cx="12" cy="5" r="2" fill="#FFD166"/>
-        <circle cx="19" cy="12" r="2" fill="#FFD166"/>
-        <circle cx="5" cy="12" r="2" fill="#FFD166"/>
-      </svg>
-    ),
-    'language': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 9H16M8 13H14M8 17H11" stroke="#40BFBF" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M7 5H17C18.1046 5 19 5.89543 19 7V17C19 18.1046 18.1046 19 17 19H7C5.89543 19 5 18.1046 5 17V7C5 5.89543 5.89543 5 7 5Z" stroke="#40BFBF" strokeWidth="2"/>
-      </svg>
-    ),
-    'mathematics': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 9H19" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M5 15H19" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M9 5L9 19" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-        <path d="M15 5L15 19" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-      </svg>
-    ),
-    'cultural': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="8" stroke="#9B59B6" strokeWidth="2"/>
-        <path d="M12 4C12 4 16 8 16 12C16 16 12 20 12 20C12 20 8 16 8 12C8 8 12 4 12 4Z" stroke="#9B59B6" strokeWidth="2"/>
-        <path d="M4 12H20" stroke="#9B59B6" strokeWidth="2"/>
-      </svg>
-    ),
-    'social-emotional': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 16C16 16 16 8 16 8H8C8 8 8 16 12 16Z" stroke="#40BFBF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M9 11C10 12 11 12 12 11" stroke="#40BFBF" strokeWidth="2" strokeLinecap="round"/>
-        <circle cx="10" cy="9" r="1" fill="#40BFBF"/>
-        <circle cx="14" cy="9" r="1" fill="#40BFBF"/>
-        <circle cx="12" cy="12" r="9" stroke="#40BFBF" strokeWidth="2"/>
-      </svg>
-    ),
-    'physical': (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="8" cy="12" r="2" stroke="#FF6B6B" strokeWidth="2"/>
-        <path d="M13 6L15 7L13 8" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M13 16L15 17L13 18" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M8 14V17C8 18.1046 8.89543 19 10 19H18C19.1046 19 20 18.1046 20 17V7C20 5.89543 19.1046 5 18 5H10C8.89543 5 8 5.89543 8 7V10" stroke="#FF6B6B" strokeWidth="2"/>
-      </svg>
-    )
-  };
+// Post interface
+interface Post {
+  id: number;
+  text: string;
+  timestamp: string;
+  images: string[];
+  videos: string[];
+  user: string;
+  userRole: string;
+  type: PostType;
+  isImportant?: boolean;
+}
 
-  const backgrounds = {
-    'practical-life': 'bg-gradient-to-r from-[#FF6B6B] to-[#FFBCAB]',
-    'sensorial': 'bg-gradient-to-r from-[#FFD166] to-[#FFBCAB]',
-    'language': 'bg-gradient-to-r from-[#40BFBF] to-[#D6EAF8]',
-    'mathematics': 'bg-gradient-to-r from-[#D99B9B] to-[#FFD6CC]',
-    'cultural': 'bg-gradient-to-r from-[#9B59B6] to-[#D2B4DE]',
-    'social-emotional': 'bg-gradient-to-r from-[#40BFBF] to-[#ABEBC6]',
-    'physical': 'bg-gradient-to-r from-[#FF6B6B] to-[#F8C471]'
-  };
+// Schedule event interface
+interface ScheduleEvent {
+  id: number;
+  title: string;
+  start: string;
+  end: string;
+  day: string;
+  color: string;
+}
 
-  const names = {
-    'practical-life': 'Practical Life',
-    'sensorial': 'Sensorial',
-    'language': 'Language',
-    'mathematics': 'Mathematics',
-    'cultural': 'Cultural',
-    'social-emotional': 'Social-Emotional',
-    'physical': 'Physical'
-  };
+// Milestone interface
+interface Milestone {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  category: string;
+  color: string;
+}
 
-  const dimensions = size === 'small' ? 'w-8 h-8 min-w-8' : 'w-12 h-12 min-w-12';
-  const innerDimensions = size === 'small' ? 'w-6 h-6' : 'w-10 h-10';
-  const ageDimensions = size === 'small' ? 'w-4 h-4 text-[8px]' : 'w-5 h-5 text-[10px]';
+// New post interface
+interface NewPost {
+  text: string;
+  images: string[];
+  videos: string[];
+}
 
-  return (
-    <div className="flex items-center">
-      <div className={`relative ${dimensions} rounded-full ${backgrounds[type]} flex items-center justify-center`}>
-        <div className={`${innerDimensions} rounded-full bg-white flex items-center justify-center`}>
-          {icons[type]}
-        </div>
-        <div className={`absolute -bottom-1 -right-1 ${ageDimensions} rounded-full bg-[#4D4D4D] text-white flex items-center justify-center font-bold border border-white`}>
-          {age}
-        </div>
-      </div>
-      {size === 'medium' && (
-        <span className="ml-2 text-xs font-medium">{names[type]}</span>
-      )}
-    </div>
-  );
+// Define Indaba Care color palette as CSS variables for consistent use
+const COLORS = {
+  // Primary Colors
+  darkGray: "#4D4D4D",
+  coralRed: "#FF6B6B",
+  softPeach: "#FFBCAB",
+  
+  // Secondary Colors
+  lightPink: "#FFD6CC",
+  mauvePink: "#D99B9B",
+  
+  // Accent Colors
+  brightTeal: "#40BFBF",
+  sunshineYellow: "#FFD166",
+  
+  // Additional Colors
+  purple: "#9B59B6",
+  lightPurple: "#D2B4DE",
+  lightBlue: "#D6EAF8",
+  lightGreen: "#ABEBC6",
+  lightOrange: "#F8C471"
 };
 
-// Sample feed items - in a real app, this would come from an API
-const feedItems = [
+// Development Path Icon Component for Milestones
+const PathIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="6" cy="6" r="3" />
+    <circle cx="18" cy="18" r="3" />
+    <path d="M6 9v3a3 3 0 0 0 3 3h6" />
+    <line x1="9" y1="12" x2="18" y2="12" />
+  </svg>
+);
+
+// Image Icon Component
+const ImageIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" />
+  </svg>
+);
+
+// Smile Icon Component
+const SmileIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+    <line x1="9" y1="9" x2="9.01" y2="9" />
+    <line x1="15" y1="9" x2="15.01" y2="9" />
+  </svg>
+);
+
+// Sample feed items with different types
+const sampleFeedItems: Post[] = [
   {
     id: 1,
-    text: "Emma showed great progress with her fine motor skills today! She was able to use scissors properly for the first time, cutting along straight lines with minimal assistance.",
-    timestamp: "2025-05-16 01:37:40",
-    images: [],
-    user: "manabunagaoka",
-    badges: ['practical-life', 'physical'] as BadgeType[],
-    ages: ['3+', '2+']
+    text: "IMPORTANT: We're excited to announce our upcoming parent-educator conference on May 25th. Please check your email for schedule details and confirmation. Contact us if you haven't received your invitation.",
+    timestamp: "2025-05-16 10:30:00",
+    images: ["/api/placeholder/600/400"],
+    videos: [],
+    user: "Indaba Admin",
+    userRole: "Administrator",
+    type: 'admin',
+    isImportant: true
   },
   {
     id: 2,
-    text: "Lucas built an impressive tower with the wooden blocks today. He demonstrated excellent spatial awareness and patience, carefully balancing each block. This activity is helping develop his hand-eye coordination and concentration.",
-    timestamp: "2025-05-15 20:30:05",
+    text: "Emma showed great progress with her fine motor skills today! She was able to use scissors properly for the first time, cutting along straight lines with minimal assistance.",
+    timestamp: "2025-05-16 01:37:40",
     images: [],
+    videos: [],
     user: "manabunagaoka",
-    badges: ['sensorial', 'mathematics'] as BadgeType[],
-    ages: ['2+', '2+']
+    userRole: "Caregiver",
+    type: 'nanny'
   },
   {
     id: 3,
+    text: "Lucas built an impressive tower with the wooden blocks today. He demonstrated excellent spatial awareness and patience, carefully balancing each block. This activity is helping develop his hand-eye coordination and concentration.",
+    timestamp: "2025-05-15 20:30:05",
+    images: ["/api/placeholder/600/400"],
+    videos: [],
+    user: "manabunagaoka",
+    userRole: "Caregiver",
+    type: 'nanny'
+  },
+  {
+    id: 4,
     text: "Our sensory bin exploration with rice and hidden objects was a big hit today! Sophia spent nearly 30 minutes fully engaged, finding all the small treasures. This activity supports tactile discrimination and concentration.",
     timestamp: "2025-05-15 18:45:33",
     images: [],
+    videos: [],
     user: "manabunagaoka",
-    badges: ['sensorial', 'language'] as BadgeType[],
-    ages: ['1+', '1+']
+    userRole: "Caregiver",
+    type: 'nanny'
+  },
+  {
+    id: 5,
+    text: "You've been subscribed to the Early Literacy Program! Each week, you'll receive age-appropriate book recommendations and literacy activities to enjoy with your child.",
+    timestamp: "2025-05-15 15:20:15",
+    images: ["/api/placeholder/600/400"],
+    videos: [],
+    user: "Indaba Services",
+    userRole: "Service",
+    type: 'subscription'
+  },
+  {
+    id: 6,
+    text: "We need to discuss changing the pickup schedule for next week. Can we arrange a call tomorrow afternoon?",
+    timestamp: "2025-05-15 14:10:22",
+    images: [],
+    videos: [],
+    user: "parentuser123",
+    userRole: "Parent",
+    type: 'employer'
+  }
+];
+
+// Sample schedule data for MVP testing
+const sampleScheduleData: ScheduleEvent[] = [
+  {
+    id: 1,
+    title: "Morning Drop-off",
+    start: "8:00 AM",
+    end: "8:30 AM",
+    day: "Today",
+    color: COLORS.coralRed
+  },
+  {
+    id: 2,
+    title: "Afternoon Pickup",
+    start: "5:00 PM",
+    end: "5:30 PM",
+    day: "Today",
+    color: COLORS.brightTeal
+  },
+  {
+    id: 3,
+    title: "Parent-Teacher Meeting",
+    start: "3:00 PM",
+    end: "4:00 PM",
+    day: "Tomorrow",
+    color: COLORS.sunshineYellow
+  },
+  {
+    id: 4,
+    title: "Special Activity: Art Class",
+    start: "10:00 AM",
+    end: "11:30 AM",
+    day: "May 21",
+    color: COLORS.purple
+  }
+];
+
+// Sample milestones data for MVP testing
+const sampleMilestones: Milestone[] = [
+  {
+    id: 1,
+    title: "Fine Motor Skills",
+    description: "Emma can now use scissors properly",
+    date: "May 16, 2025",
+    category: "Physical Development",
+    color: COLORS.coralRed
+  },
+  {
+    id: 2,
+    title: "Language Development",
+    description: "Lucas is using complete sentences consistently",
+    date: "May 14, 2025",
+    category: "Communication",
+    color: COLORS.brightTeal
+  },
+  {
+    id: 3,
+    title: "Social Skills",
+    description: "Sophia is sharing toys with other children",
+    date: "May 10, 2025",
+    category: "Social-Emotional",
+    color: COLORS.purple
+  },
+  {
+    id: 4,
+    title: "Mathematics",
+    description: "Noah can count to 20 without assistance",
+    date: "May 8, 2025",
+    category: "Cognitive Development",
+    color: COLORS.mauvePink
   }
 ];
 
 export default function HomePage() {
-  const [isRecording, setIsRecording] = useState(false)
-  const [newPost, setNewPost] = useState({ text: '', images: [] })
-  const [feed, setFeed] = useState(feedItems)
-  const [isEditing, setIsEditing] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const router = useRouter()
-  const currentUser = 'manabunagaoka'
-  const currentTime = '2025-05-16 01:37:40'
+  // Separate states for different modals and functionality
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState<boolean>(false);
+  const [isMilestonesOpen, setIsMilestonesOpen] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  
+  // Post data state
+  const [newPost, setNewPost] = useState<NewPost>({ text: '', images: [], videos: [] });
+  const [feed, setFeed] = useState<Post[]>(sampleFeedItems);
+  
+  // Input refs
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  
+  // User info
+  const currentUser = 'manabunagaoka';
+  const currentTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
-  // AI analysis would occur here to determine appropriate badges
-  const analyzeContent = (text: string): { badges: BadgeType[], ages: string[] } => {
-    // This is a simplified mock of what would be an AI-based analysis
-    const result: { badges: BadgeType[], ages: string[] } = {
-      badges: [],
-      ages: []
-    };
-    
-    if (text.toLowerCase().includes('motor') || text.toLowerCase().includes('coordination')) {
-      result.badges.push('physical');
-      result.ages.push('1+');
+  // Get avatar background color based on user type
+  const getAvatarStyle = (type: PostType): React.CSSProperties => {
+    switch(type) {
+      case 'admin':
+        return {
+          backgroundColor: COLORS.softPeach
+        };
+      case 'subscription':
+        return {
+          backgroundColor: COLORS.lightBlue
+        };
+      case 'employer':
+        return {
+          backgroundColor: COLORS.lightPurple
+        };
+      default:
+        return {
+          backgroundColor: COLORS.lightPink
+        };
     }
-    
-    if (text.toLowerCase().includes('concentration') || text.toLowerCase().includes('focus')) {
-      result.badges.push('practical-life');
-      result.ages.push('2+');
-    }
-    
-    if (text.toLowerCase().includes('spill') || text.toLowerCase().includes('pour')) {
-      result.badges.push('practical-life');
-      result.ages.push('3+');
-    }
-    
-    // If no badges were assigned, default to practical life
-    if (result.badges.length === 0) {
-      result.badges.push('practical-life');
-      result.ages.push('2+');
-    }
-    
-    return result;
   };
 
-  const handleVoiceRecording = () => {
-    // Simulate voice-to-text transcription
-    setIsRecording(true)
-    setTimeout(() => {
-      setNewPost({
-        ...newPost,
-        text: "Noah did a wonderful job with his practical life exercises today. He practiced pouring water between containers and managed to do it with minimal spills. His concentration is really improving!"
-      })
-      setIsRecording(false)
-      setIsEditing(true)
-    }, 2000)
-  }
+  // Get icon color based on user type
+  const getIconColor = (type: PostType): string => {
+    switch(type) {
+      case 'admin':
+        return COLORS.coralRed;
+      case 'subscription':
+        return COLORS.brightTeal;
+      case 'employer':
+        return COLORS.purple;
+      default:
+        return COLORS.coralRed;
+    }
+  };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleVoiceRecording = (): void => {
+    // Start recording without setting any other states
+    setIsRecording(true);
+  };
+  
+  const handleStopRecording = (): void => {
+    // Just close the recording modal
+    setIsRecording(false);
+  };
+  
+  const handleRecordingComplete = (): void => {
+    // This simulates successful voice recording completion
+    setNewPost({
+      ...newPost,
+      text: "Noah did a wonderful job with his practical life exercises today. He practiced pouring water between containers and managed to do it with minimal spills. His concentration is really improving!"
+    });
+    setIsRecording(false);
+    setIsEditing(true);
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     setNewPost({
       ...newPost,
       text: e.target.value
-    })
-  }
+    });
+  };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // In a real app, this would handle actual file uploads
-    // For this demo, we'll just simulate adding random placeholder images
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    // For MVP, just simulate adding placeholder images
     if (e.target.files && e.target.files.length > 0) {
       setNewPost({
         ...newPost,
         images: [...newPost.images, "/api/placeholder/600/400"]
-      })
+      });
     }
-  }
+  };
 
-  const handlePost = () => {
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    // For MVP, just simulate adding placeholder videos
+    if (e.target.files && e.target.files.length > 0) {
+      setNewPost({
+        ...newPost,
+        videos: [...newPost.videos, "/api/placeholder/400/300"]
+      });
+    }
+  };
+
+  const handlePost = (): void => {
     if (newPost.text.trim()) {
-      const analysis = analyzeContent(newPost.text);
-      
-      const newFeedItem = {
+      const newFeedItem: Post = {
         id: feed.length + 1,
         text: newPost.text,
         timestamp: currentTime,
         images: newPost.images,
+        videos: newPost.videos,
         user: currentUser,
-        badges: analysis.badges,
-        ages: analysis.ages
-      }
+        userRole: "Caregiver",
+        type: 'nanny'
+      };
 
-      setFeed([newFeedItem, ...feed])
-      setNewPost({ text: '', images: [] })
-      setIsEditing(false)
+      setFeed([newFeedItem, ...feed]);
+      setNewPost({ text: '', images: [], videos: [] });
+      setIsEditing(false);
     }
-  }
+  };
 
-  const removeImage = (index: number) => {
+  const removeImage = (index: number): void => {
     setNewPost({
       ...newPost,
       images: newPost.images.filter((_, i) => i !== index)
-    })
-  }
+    });
+  };
+
+  const removeVideo = (index: number): void => {
+    setNewPost({
+      ...newPost,
+      videos: newPost.videos.filter((_, i) => i !== index)
+    });
+  };
+
+  const handleScheduleOpen = (): void => {
+    setIsScheduleOpen(true);
+  };
+
+  const handleMilestonesOpen = (): void => {
+    setIsMilestonesOpen(true);
+  };
+
+  // Get post background color based on post type
+  const getPostBackgroundStyle = (type: PostType): React.CSSProperties => {
+    switch(type) {
+      case 'admin':
+        return {
+          backgroundColor: '#FFF3F3',
+          borderLeft: `4px solid ${COLORS.coralRed}`
+        };
+      case 'subscription':
+        return {
+          backgroundColor: '#EBF9F9',
+          borderLeft: `4px solid ${COLORS.brightTeal}`
+        };
+      case 'employer':
+        return {
+          backgroundColor: '#F5F0FA',
+          borderLeft: `4px solid ${COLORS.purple}`
+        };
+      default:
+        return {
+          backgroundColor: '#FFFFFF'
+        };
+    }
+  };
+
+  const headerStyle: React.CSSProperties = {
+    backgroundColor: 'white',
+    padding: '1rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    borderBottom: `1px solid ${COLORS.coralRed}`
+  };
+
+  const navStyle: React.CSSProperties = {
+    position: 'fixed',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: COLORS.darkGray,
+    display: 'flex',
+    justifyContent: 'space-around',
+    padding: '0.75rem 1rem',
+    boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)',
+    zIndex: 10
+  };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header - White with subtle Coral Red accents */}
-      <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FF6B6B]">
-        <div className="flex items-center">
-          <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f9fafb' }}>
+      {/* Header - White with Coral Red accents */}
+      <div style={headerStyle}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ height: '2.5rem', marginRight: '0.75rem', borderRadius: '0.375rem', overflow: 'hidden', position: 'relative' }}>
             <img 
               src="/images/indabacarelogo.jpg" 
               alt="Indaba Care Logo" 
-              className="h-10 w-auto object-contain" 
-              onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
+              style={{ height: '2.5rem', width: 'auto', objectFit: 'contain' }}
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                e.currentTarget.src = "/api/placeholder/50/50";
+              }} 
             />
           </div>
-          <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
+          <h1 style={{ fontWeight: 'bold', fontSize: '1.25rem', color: COLORS.darkGray }}>Indaba Care</h1>
         </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">{currentUser}</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <User size={20} style={{ marginRight: '0.5rem', color: COLORS.darkGray }} />
+          <span style={{ color: COLORS.darkGray }}>{currentUser}</span>
         </div>
       </div>
       
-      {/* Content - Instagram-like Feed */}
-      <div className="flex-1 overflow-auto pb-20">
+      {/* Content - Simplified Feed */}
+      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '6rem' }}>
         {/* New Post Editor (if editing) */}
         {isEditing && (
-          <div className="bg-white p-4 mb-4 border-b border-gray-200">
-            <div className="mb-3">
+          <div style={{ backgroundColor: 'white', padding: '1rem', marginBottom: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+            <div style={{ marginBottom: '0.75rem' }}>
               <textarea
-                className="w-full border border-gray-200 rounded-lg p-3 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF6B6B] min-h-[100px]"
+                style={{ 
+                  width: '100%', 
+                  border: '1px solid #e5e7eb', 
+                  borderRadius: '0.5rem', 
+                  padding: '0.75rem', 
+                  resize: 'none', 
+                  minHeight: '100px',
+                  outline: 'none'
+                }}
                 placeholder="What's happening with your child today?"
                 value={newPost.text}
                 onChange={handleTextChange}
@@ -280,13 +475,56 @@ export default function HomePage() {
             
             {/* Uploaded Images Preview */}
             {newPost.images.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <h4 style={{ width: '100%', fontSize: '0.875rem', fontWeight: '500', color: '#374151' }}>Photos:</h4>
                 {newPost.images.map((img, index) => (
-                  <div key={index} className="relative">
-                    <img src={img} alt="Upload preview" className="w-20 h-20 object-cover rounded" />
+                  <div key={`img-${index}`} style={{ position: 'relative' }}>
+                    <img src={img} alt="Upload preview" style={{ width: '5rem', height: '5rem', objectFit: 'cover', borderRadius: '0.25rem' }} />
                     <button 
-                      className="absolute -top-2 -right-2 bg-[#FF6B6B] rounded-full p-1 text-white"
+                      style={{ 
+                        position: 'absolute', 
+                        top: '-0.5rem', 
+                        right: '-0.5rem', 
+                        backgroundColor: COLORS.coralRed, 
+                        borderRadius: '9999px', 
+                        padding: '0.25rem', 
+                        color: 'white',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
                       onClick={() => removeImage(index)}
+                      type="button"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Uploaded Videos Preview */}
+            {newPost.videos.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <h4 style={{ width: '100%', fontSize: '0.875rem', fontWeight: '500', color: '#374151' }}>Videos:</h4>
+                {newPost.videos.map((video, index) => (
+                  <div key={`video-${index}`} style={{ position: 'relative' }}>
+                    <div style={{ width: '6rem', height: '6rem', backgroundColor: '#e5e7eb', borderRadius: '0.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Video size={24} style={{ color: '#6b7280' }} />
+                    </div>
+                    <button 
+                      style={{ 
+                        position: 'absolute', 
+                        top: '-0.5rem', 
+                        right: '-0.5rem', 
+                        backgroundColor: COLORS.coralRed, 
+                        borderRadius: '9999px', 
+                        padding: '0.25rem', 
+                        color: 'white',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => removeVideo(index)}
+                      type="button"
                     >
                       <X size={14} />
                     </button>
@@ -296,153 +534,535 @@ export default function HomePage() {
             )}
             
             {/* Action Buttons */}
-            <div className="flex justify-between items-center">
-              <div className="flex space-x-2">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
                 <button 
-                  className="p-2 text-gray-500 hover:text-[#FF6B6B]"
+                  style={{ padding: '0.5rem', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}
                   onClick={() => fileInputRef.current?.click()}
+                  type="button"
                 >
-                  <ImageIcon size={20} />
+                  <ImageIcon />
                 </button>
                 <input 
                   type="file" 
                   ref={fileInputRef} 
-                  className="hidden" 
+                  style={{ display: 'none' }} 
                   accept="image/*" 
                   onChange={handleImageUpload}
                   multiple
                 />
-                <button className="p-2 text-gray-500 hover:text-[#FF6B6B]">
+                <button 
+                  style={{ padding: '0.5rem', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                  onClick={() => videoInputRef.current?.click()}
+                  type="button"
+                >
+                  <Video size={20} />
+                </button>
+                <input 
+                  type="file" 
+                  ref={videoInputRef} 
+                  style={{ display: 'none' }} 
+                  accept="video/*" 
+                  onChange={handleVideoUpload}
+                  multiple
+                />
+                <button 
+                  style={{ padding: '0.5rem', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                  type="button"
+                >
                   <Camera size={20} />
                 </button>
-                <button className="p-2 text-gray-500 hover:text-[#FF6B6B]">
-                  <Smile size={20} />
+                <button 
+                  style={{ padding: '0.5rem', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                  type="button"
+                >
+                  <SmileIcon />
                 </button>
               </div>
               
               <button 
-                className="bg-[#FF6B6B] text-white px-4 py-2 rounded-full font-medium flex items-center"
+                style={{ 
+                  backgroundColor: COLORS.coralRed, 
+                  color: 'white', 
+                  padding: '0.5rem 1rem', 
+                  borderRadius: '9999px', 
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
                 onClick={handlePost}
+                type="button"
               >
-                <Send size={16} className="mr-1" />
+                <Send size={16} style={{ marginRight: '0.25rem' }} />
                 Post
               </button>
             </div>
           </div>
         )}
         
-        {/* Feed Items */}
+        {/* Feed Items - Simplified without badges */}
         {feed.map(item => (
-          <div key={item.id} className="bg-white mb-4 border-b border-gray-200">
+          <div key={item.id} style={{ ...getPostBackgroundStyle(item.type), marginBottom: '1rem', borderBottom: '1px solid #e5e7eb' }}>
             {/* Post Header */}
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-[#FFD6CC] flex items-center justify-center">
-                  <User size={20} className="text-[#FF6B6B]" />
+            <div style={{ padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ 
+                  ...getAvatarStyle(item.type), 
+                  width: '2.5rem', 
+                  height: '2.5rem', 
+                  borderRadius: '9999px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>
+                  {item.type === 'admin' ? <Bell size={20} style={{ color: getIconColor(item.type) }} /> : 
+                   item.type === 'subscription' ? <BookOpen size={20} style={{ color: getIconColor(item.type) }} /> : 
+                   <User size={20} style={{ color: getIconColor(item.type) }} />}
                 </div>
-                <div className="ml-3">
-                  <p className="font-medium text-[#4D4D4D]">{item.user}</p>
-                  <p className="text-xs text-gray-500">{item.timestamp}</p>
+                <div style={{ marginLeft: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ fontWeight: '500', color: COLORS.darkGray }}>{item.user}</p>
+                    {item.isImportant && (
+                      <span style={{ 
+                        marginLeft: '0.5rem', 
+                        padding: '0 0.5rem', 
+                        fontSize: '0.75rem', 
+                        backgroundColor: '#fee2e2', 
+                        color: '#b91c1c', 
+                        borderRadius: '9999px',
+                        lineHeight: '1.25rem'
+                      }}>Important</span>
+                    )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>{item.timestamp}</p>
+                    <span style={{ fontSize: '0.75rem', color: '#9ca3af', margin: '0 0.25rem' }}>•</span>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>{item.userRole}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Post Text */}
-            <div className="px-4 pb-2">
-              <p className="text-[#4D4D4D]">{item.text}</p>
-            </div>
-
-            {/* Montessori Badge Indicators - No labels */}
-            <div className="px-4 pb-4 flex flex-wrap gap-2">
-              <div className="flex space-x-2">
-                {item.badges.map((badge, index) => (
-                  <MontessoriBadge key={index} type={badge} age={item.ages[index]} />
-                ))}
-              </div>
+            <div style={{ padding: '0 1rem 0.5rem 1rem' }}>
+              <p style={{ color: COLORS.darkGray }}>{item.text}</p>
             </div>
             
-            {/* Post Images - not displayed for simplicity as requested */}
+            {/* Post Images */}
+            {item.images.length > 0 && (
+              <div style={{ padding: '0 1rem 0.5rem 1rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {item.images.map((img, index) => (
+                    <img 
+                      key={index} 
+                      src={img} 
+                      alt="Post content" 
+                      style={{ maxHeight: '14rem', borderRadius: '0.5rem', objectFit: 'cover' }} 
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Post Videos */}
+            {item.videos.length > 0 && (
+              <div style={{ padding: '0 1rem 1rem 1rem' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {item.videos.map((video, index) => (
+                    <div key={index} style={{ position: 'relative', borderRadius: '0.5rem', overflow: 'hidden' }}>
+                      <div style={{ width: '100%', height: '12rem', backgroundColor: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={48} style={{ color: '#6b7280' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <div style={{ padding: '0 1rem 1rem 1rem' }}>
+              {/* Action buttons like comment, emoji reactions could go here */}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Voice Recording FAB */}
+      {/* Floating Action Buttons - Ensure they always appear when not editing */}
+      
+      {/* Milestones Button */}
       {!isEditing && (
-        <button 
-          className="fixed right-4 bottom-20 w-14 h-14 rounded-full bg-[#FF6B6B] text-white flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-colors"
+        <div 
+          style={{
+            position: 'fixed',
+            right: '1rem',
+            bottom: '272px',
+            width: '3.5rem',
+            height: '3.5rem',
+            borderRadius: '9999px',
+            backgroundColor: COLORS.purple,
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            zIndex: 20,
+            cursor: 'pointer'
+          }}
+          onClick={handleMilestonesOpen}
+        >
+          <PathIcon />
+        </div>
+      )}
+      
+      {/* Calendar/Schedule Button */}
+      {!isEditing && (
+        <div 
+          style={{
+            position: 'fixed',
+            right: '1rem',
+            bottom: '204px',
+            width: '3.5rem',
+            height: '3.5rem',
+            borderRadius: '9999px',
+            backgroundColor: COLORS.sunshineYellow,
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            zIndex: 20,
+            cursor: 'pointer'
+          }}
+          onClick={handleScheduleOpen}
+        >
+          <Calendar size={24} />
+        </div>
+      )}
+      
+      {/* Voice Recording Button */}
+      {!isEditing && (
+        <div 
+          style={{
+            position: 'fixed',
+            right: '1rem',
+            bottom: '136px',
+            width: '3.5rem',
+            height: '3.5rem',
+            borderRadius: '9999px',
+            backgroundColor: COLORS.coralRed,
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            zIndex: 20,
+            cursor: 'pointer'
+          }}
           onClick={handleVoiceRecording}
         >
           <Mic size={24} />
-        </button>
+        </div>
       )}
 
-      {/* Text Entry FAB */}
+      {/* Text Entry Button */}
       {!isEditing && (
-        <button 
-          className="fixed right-4 bottom-36 w-14 h-14 rounded-full bg-[#40BFBF] text-white flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-colors"
+        <div 
+          style={{
+            position: 'fixed',
+            right: '1rem',
+            bottom: '68px',
+            width: '3.5rem',
+            height: '3.5rem',
+            borderRadius: '9999px',
+            backgroundColor: COLORS.brightTeal,
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            zIndex: 20,
+            cursor: 'pointer'
+          }}
           onClick={() => setIsEditing(true)}
         >
           <Plus size={24} />
-        </button>
+        </div>
       )}
 
-      {/* Voice Recording Modal */}
+      {/* Voice Recording Modal - Updated with separate cancel and done buttons */}
       {isRecording && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white w-11/12 max-w-md rounded-lg overflow-hidden">
-            <div className="bg-[#FF6B6B] p-4 text-white flex justify-between items-center">
-              <h3 className="font-medium">Voice Recording</h3>
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          zIndex: 50, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+        }}>
+          <div style={{ backgroundColor: 'white', width: '91.666667%', maxWidth: '28rem', borderRadius: '0.5rem', overflow: 'hidden' }}>
+            <div style={{ backgroundColor: COLORS.coralRed, padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontWeight: '500' }}>Voice Recording</h3>
               <button 
-                onClick={() => setIsRecording(false)}
-                className="text-white hover:text-gray-200"
+                onClick={handleStopRecording}
+                style={{ color: 'white', background: 'none', border: 'none', cursor: 'pointer' }}
+                type="button"
               >
                 <X size={20} />
               </button>
             </div>
             
-            <div className="p-5">
-              <div className="flex justify-center mb-4">
-                <div className="w-20 h-20 rounded-full bg-[#FF6B6B] bg-opacity-20 flex items-center justify-center animate-pulse">
-                  <Mic size={32} className="text-[#FF6B6B]" />
+            <div style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <div style={{ 
+                  width: '5rem', 
+                  height: '5rem', 
+                  borderRadius: '9999px', 
+                  backgroundColor: `${COLORS.coralRed}33`, 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center',
+                  animation: 'pulse 2s infinite'
+                }}>
+                  <Mic size={32} style={{ color: COLORS.coralRed }} />
                 </div>
               </div>
               
-              <div className="mb-4 bg-gray-50 p-3 rounded-lg min-h-[100px] border border-gray-200">
-                <p className="text-gray-500">Listening... speak now</p>
+              <div style={{ 
+                marginBottom: '1rem', 
+                backgroundColor: '#f9fafb', 
+                padding: '0.75rem', 
+                borderRadius: '0.5rem', 
+                minHeight: '100px', 
+                border: '1px solid #e5e7eb' 
+              }}>
+                <p style={{ color: '#6b7280' }}>Listening... speak now</p>
+              </div>
+              
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button 
+                  style={{ 
+                    flex: 1,
+                    backgroundColor: '#f3f4f6', 
+                    color: '#374151', 
+                    padding: '0.5rem 0', 
+                    borderRadius: '0.5rem', 
+                    fontWeight: '500',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onClick={handleStopRecording}
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button 
+                  style={{ 
+                    flex: 1,
+                    backgroundColor: COLORS.coralRed, 
+                    color: 'white', 
+                    padding: '0.5rem 0', 
+                    borderRadius: '0.5rem', 
+                    fontWeight: '500',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                  onClick={handleRecordingComplete}
+                  type="button"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Modal - Placeholder for FullCalendar integration */}
+      {isScheduleOpen && (
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          zIndex: 50, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+        }}>
+          <div style={{ backgroundColor: 'white', width: '91.666667%', maxWidth: '28rem', borderRadius: '0.5rem', overflow: 'hidden' }}>
+            <div style={{ backgroundColor: COLORS.sunshineYellow, padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontWeight: '500' }}>Schedule</h3>
+              <button 
+                onClick={() => setIsScheduleOpen(false)}
+                style={{ color: 'white', background: 'none', border: 'none', cursor: 'pointer' }}
+                type="button"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div style={{ padding: '1.25rem' }}>
+              <div style={{ backgroundColor: '#f9fafb', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb', marginBottom: '1rem' }}>
+                <p style={{ textAlign: 'center', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.5rem' }}>May 2025</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.25rem', marginBottom: '1rem' }}>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Su</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Mo</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Tu</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>We</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Th</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Fr</div>
+                  <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#6b7280' }}>Sa</div>
+                  
+                  {/* Calendar days - simplified for MVP */}
+                  {Array.from({ length: 31 }, (_, i) => (
+                    <div 
+                      key={i} 
+                      style={{ 
+                        textAlign: 'center', 
+                        padding: '0.25rem 0', 
+                        fontSize: '0.75rem',
+                        color: i + 1 === 19 ? 'white' : '#374151',
+                        backgroundColor: i + 1 === 19 ? COLORS.sunshineYellow : 'transparent',
+                        borderRadius: i + 1 === 19 ? '9999px' : '0'
+                      }}
+                    >
+                      {i + 1}
+                    </div>
+                  ))}
+                </div>
+                
+                <div style={{ marginTop: '1rem', borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                  <h4 style={{ fontWeight: '500', color: '#374151', marginBottom: '0.5rem' }}>Upcoming Events</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {sampleScheduleData.map(event => (
+                      <div key={event.id} style={{ display: 'flex', alignItems: 'center', padding: '0.5rem', backgroundColor: 'white', borderRadius: '0.25rem', border: '1px solid #e5e7eb' }}>
+                        <div style={{ width: '0.5rem', height: '100%', backgroundColor: event.color, borderRadius: '0.25rem', marginRight: '0.5rem' }}></div>
+                        <div>
+                          <p style={{ fontSize: '0.875rem', fontWeight: '500' }}>{event.title}</p>
+                          <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>{event.day}: {event.start} - {event.end}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
               
               <button 
-                className="w-full bg-[#FF6B6B] text-white py-2 rounded-lg font-medium"
-                onClick={() => setIsRecording(false)}
+                style={{ 
+                  width: '100%', 
+                  backgroundColor: COLORS.sunshineYellow, 
+                  color: 'white', 
+                  padding: '0.5rem 0', 
+                  borderRadius: '0.5rem', 
+                  fontWeight: '500',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setIsScheduleOpen(false)}
+                type="button"
               >
-                Stop Recording
+                Close
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Fixed Bottom Navigation - Mobile style with Coral Red theme */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-        <button className="flex flex-col items-center">
-          <Home size={20} className="text-[#FF6B6B]" />
-          <span className="text-xs mt-1 text-white">Home</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/fun')}
-        >
-          <Play size={20} />
-          <span className="text-xs mt-1">Fun</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => router.push('/resources')}
-        >
-          <BookOpen size={20} />
-          <span className="text-xs mt-1">Resources</span>
-        </button>
-      </div>
+      {/* Milestones Modal */}
+      {isMilestonesOpen && (
+        <div style={{ 
+          position: 'fixed', 
+          inset: 0, 
+          zIndex: 50, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          backgroundColor: 'rgba(0, 0, 0, 0.5)' 
+        }}>
+          <div style={{ backgroundColor: 'white', width: '91.666667%', maxWidth: '28rem', borderRadius: '0.5rem', overflow: 'hidden' }}>
+            <div style={{ backgroundColor: COLORS.purple, padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ fontWeight: '500' }}>Development Journey</h3>
+              <button 
+                onClick={() => setIsMilestonesOpen(false)}
+                style={{ color: 'white', background: 'none', border: 'none', cursor: 'pointer' }}
+                type="button"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div style={{ padding: '1.25rem' }}>
+              <div style={{ backgroundColor: '#f9fafb', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #e5e7eb', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  {sampleMilestones.map(milestone => (
+                    <div 
+                      key={milestone.id} 
+                      style={{ 
+                        backgroundColor: 'white', 
+                        padding: '0.75rem', 
+                        borderRadius: '0.5rem', 
+                        border: '1px solid #e5e7eb', 
+                        borderLeft: `4px solid ${milestone.color}`, 
+                        boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' 
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <h4 style={{ fontWeight: '500', fontSize: '0.875rem' }}>{milestone.title}</h4>
+                        <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>{milestone.date}</span>
+                      </div>
+                      <p style={{ fontSize: '0.875rem', color: '#374151', marginTop: '0.25rem' }}>{milestone.description}</p>
+                      <span style={{ 
+                        display: 'inline-block', 
+                        marginTop: '0.5rem', 
+                        padding: '0.25rem 0.5rem', 
+                        backgroundColor: '#f3f4f6', 
+                        fontSize: '0.75rem', 
+                        borderRadius: '9999px' 
+                      }}>
+                        {milestone.category}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <button 
+                style={{ 
+                  width: '100%', 
+                  backgroundColor: COLORS.purple, 
+                  color: 'white', 
+                  padding: '0.5rem 0', 
+                  borderRadius: '0.5rem', 
+                  fontWeight: '500',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setIsMilestonesOpen(false)}
+                type="button"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fixed Bottom Navigation */}
+      <nav style={navStyle}>
+        <Link href="/home" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
+          <Home size={20} style={{ color: COLORS.coralRed }} />
+          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: 'white' }}>Home</span>
+        </Link>
+        <Link href="/fun" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
+          <Play size={20} style={{ color: '#d1d5db' }} />
+          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#d1d5db' }}>Fun</span>
+        </Link>
+        <Link href="/resources" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
+          <BookOpen size={20} style={{ color: '#d1d5db' }} />
+          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#d1d5db' }}>Resources</span>
+        </Link>
+      </nav>
     </div>
-  )
+  );
 }
