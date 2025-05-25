@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useRef, ChangeEvent, MouseEvent } from 'react';
-import { Mic, Camera, Send, X, Plus, User, Home, BookOpen, Play, Calendar, Bell, Video } from 'lucide-react';
+import { Mic, Camera, Send, X, Plus, User, Home, BookOpen, Play, Calendar, Bell, Video, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import UserMenu from '../../components/UserMenu';
 
 // Post types
 type PostType = 'admin' | 'employer' | 'nanny' | 'subscription';
@@ -119,7 +120,7 @@ const sampleFeedItems: Post[] = [
     timestamp: "2025-05-16 01:37:40",
     images: [],
     videos: [],
-    user: "manabunagaoka",
+    user: "Guest",
     userRole: "Caregiver",
     type: 'nanny'
   },
@@ -129,7 +130,7 @@ const sampleFeedItems: Post[] = [
     timestamp: "2025-05-15 20:30:05",
     images: ["/images/post-blocks-tower.jpg"],
     videos: [],
-    user: "manabunagaoka",
+    user: "Guest",
     userRole: "Caregiver",
     type: 'nanny'
   },
@@ -139,7 +140,7 @@ const sampleFeedItems: Post[] = [
     timestamp: "2025-05-15 18:45:33",
     images: [],
     videos: [],
-    user: "manabunagaoka",
+    user: "Guest",
     userRole: "Caregiver",
     type: 'nanny'
   },
@@ -252,8 +253,6 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   
-  // User info
-  const currentUser = 'manabunagaoka';
   const currentTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
   // Get avatar background color based on user type
@@ -347,7 +346,7 @@ export default function HomePage() {
         timestamp: currentTime,
         images: newPost.images,
         videos: newPost.videos,
-        user: currentUser,
+        user: "Guest",
         userRole: "Caregiver",
         type: 'nanny'
       };
@@ -445,10 +444,7 @@ export default function HomePage() {
           </div>
           <h1 style={{ fontWeight: 'bold', fontSize: '1.25rem', color: COLORS.darkGray }}>Indaba Care</h1>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <User size={20} style={{ marginRight: '0.5rem', color: COLORS.darkGray }} />
-          <span style={{ color: COLORS.darkGray }}>{currentUser}</span>
-        </div>
+        <UserMenu />
       </div>
       
       {/* Content - Simplified Feed */}

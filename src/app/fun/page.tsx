@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from 'react'
-import { Home, BookOpen, Play, Tag, Search, Filter, User, ChevronDown, ChevronRight } from 'lucide-react'
+import { Home, BookOpen, Play, Tag, Search, Filter, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import UserMenu from '../../components/UserMenu'
 
 // Types
 type Activity = {
@@ -86,8 +87,6 @@ export default function FunPage() {
   const [selectedAge, setSelectedAge] = useState("")
   const [showFilters, setShowFilters] = useState(false)
   const router = useRouter()
-  const currentUser = 'manabunagaoka'
-  const currentTime = '2025-05-24 04:06:29'
   
   // Filter activities based on selected category and age
   const filteredActivities = activities.filter(activity => {
@@ -106,7 +105,7 @@ export default function FunPage() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header with logo and user - matching Resources page */}
+      {/* Header with logo and user menu */}
       <div className="bg-white p-4 flex justify-between items-center border-b">
         <div className="flex items-center">
           <div className="h-12 w-auto mr-3 flex items-center">
@@ -118,13 +117,10 @@ export default function FunPage() {
             <h1 className="font-bold text-2xl text-[#4D4D4D] ml-2">Indaba Care</h1>
           </div>
         </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">{currentUser}</span>
-        </div>
+        <UserMenu />
       </div>
 
-      {/* Title and Search - Like Resources page */}
+      {/* Title and Search */}
       <div className="p-4 bg-white border-b flex flex-wrap justify-between items-center">
         <h2 className="text-3xl font-bold text-[#4D4D4D]">Fun Activities</h2>
         <div className="relative flex-grow max-w-md ml-4">
@@ -193,7 +189,7 @@ export default function FunPage() {
         </div>
       </div>
 
-      {/* Activities List - Improved image display with even more height */}
+      {/* Activities List */}
       <div className="flex-1 overflow-auto pb-20 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredActivities.map(activity => (
@@ -201,7 +197,7 @@ export default function FunPage() {
               key={activity.id} 
               className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
             >
-              <div className="w-full h-80 bg-gray-200"> {/* Increased height from h-60 to h-80 */}
+              <div className="w-full h-80 bg-gray-200">
                 <img 
                   src={activity.image} 
                   alt={activity.title} 
@@ -241,7 +237,6 @@ export default function FunPage() {
                   </ul>
                 </div>
                 
-                {/* Grayed out "View Details" button to indicate it's not active yet */}
                 <button 
                   className="w-full mt-2 py-2 bg-gray-300 text-gray-600 rounded-lg font-medium text-sm cursor-not-allowed opacity-70"
                   disabled={true}
@@ -254,7 +249,7 @@ export default function FunPage() {
         </div>
       </div>
 
-      {/* Fixed Bottom Navigation - Same as before */}
+      {/* Fixed Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
         <button 
           className="flex flex-col items-center text-gray-300"

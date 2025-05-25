@@ -1,18 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Search, User, Home, BookOpen, Play } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Home, BookOpen, Play } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { CourseCard } from '../../components/CourseCard';
+import UserMenu from '../../components/UserMenu';
 
 export default function ResourcesCatalogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
-  const currentUser = 'manabunagaoka';
-  const currentTime = '2025-05-19 01:16:48';
 
   const handleCardClick = (path: string) => {
-    // No need to set any flag, the layout will detect direction change
     router.push(path);
   };
 
@@ -143,10 +141,7 @@ export default function ResourcesCatalogPage() {
           </div>
           <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
         </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">{currentUser}</span>
-        </div>
+        <UserMenu />
       </div>
 
       {/* Page Header with Search */}
@@ -196,7 +191,6 @@ export default function ResourcesCatalogPage() {
         <button 
           className="flex flex-col items-center text-gray-300"
           onClick={() => {
-            // Flag to prevent animation when coming from other tabs
             sessionStorage.setItem('majorTabSwitch', 'true');
             router.push('/home');
           }}
@@ -207,7 +201,6 @@ export default function ResourcesCatalogPage() {
         <button 
           className="flex flex-col items-center text-gray-300"
           onClick={() => {
-            // Flag to prevent animation when coming from other tabs
             sessionStorage.setItem('majorTabSwitch', 'true');
             router.push('/fun');
           }}
