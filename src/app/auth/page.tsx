@@ -1,23 +1,132 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, ArrowLeft, Check } from 'lucide-react';
-// import SplashScreen from '@/components/SplashScreen'; // Will be available after merge
+import { motion } from 'framer-motion';
 
 export default function AuthPage() {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState('welcome');
+  const [isInitialRender, setIsInitialRender] = useState(true);
+  const [currentStep, setCurrentStep] = useState('login');
   const [userType, setUserType] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    setIsInitialRender(false);
+  }, []);
+
+  // Redesigned splash screen with better timing and shorter progress bar
+  const SplashScreen = ({ onComplete }) => {
+    const [progress, setProgress] = useState(0);
+    const [progressComplete, setProgressComplete] = useState(false);
+    
+    // Use a much shorter duration for the progress bar
+    const progressDuration = 1500; // 1.5 seconds for progress bar
+    
+    useEffect(() => {
+      // Progress bar animation
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          const newProgress = prev + 1;
+          // When progress reaches 100%, mark it as complete
+          if (newProgress >= 100) {
+            setProgressComplete(true);
+            clearInterval(interval);
+          }
+          return newProgress > 100 ? 100 : newProgress;
+        });
+      }, progressDuration / 100);
+      
+      // Separate timer for navigation - much longer to allow for the "beat" after completion
+      const timer = setTimeout(() => {
+        onComplete();
+      }, 4500); // 4.5 seconds total for the entire splash screen
+      
+      return () => {
+        clearTimeout(timer);
+        clearInterval(interval);
+      };
+    }, [onComplete]);
+
+    return (
+      <motion.div 
+        className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50" 
+        initial={{ opacity: 1 }}
+        animate={{ 
+          opacity: progressComplete ? 0 : 1, // Only fade when progress is complete
+          transition: { 
+            delay: 3.2, // Long delay after progress completes (the "beat")
+            duration: 1.5  // Very slow fade out (1.5 seconds)
+          }
+        }}
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ 
+            scale: 1, 
+            opacity: 1,
+            transition: { duration: 0.5 }
+          }}
+          className="flex flex-col items-center"
+        >
+          {/* Logo */}
+          <div className="mb-6">
+            <img 
+              src="/images/indabacarelogo.jpg" 
+              alt="Indaba Care Logo" 
+              className="w-[150px] h-[150px] object-contain rounded-full"
+            />
+          </div>
+          
+          <motion.h1 
+            className="text-3xl font-bold text-[#4D4D4D] mb-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              transition: { delay: 0.3, duration: 0.5 }
+            }}
+          >
+            Indaba Care
+          </motion.h1>
+          
+          <motion.p 
+            className="text-[#FF6B6B] text-lg mb-8"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: 1,
+              transition: { delay: 0.6, duration: 0.5 }
+            }}
+          >
+            Transforming Childcare, Together.
+          </motion.p>
+          
+          {/* Progress bar - SHORTER width */}
+          <motion.div className="w-44 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <motion.div 
+              className="h-full bg-[#FF6B6B]"
+              initial={{ width: "0%" }}
+              animate={{ 
+                width: `${progress}%`,
+                transition: { duration: progressDuration / 1000, ease: "linear" }
+              }}
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    );
+  };
 
   const WelcomeScreen = () => (
     <div className="min-h-screen bg-gradient-to-br from-[#FFD6CC] to-[#FFBCAB] flex flex-col items-center justify-center p-6">
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
         <div className="flex justify-center mb-8">
-          <div className="w-24 h-24 bg-[#FF6B6B] rounded-full flex items-center justify-center">
-            <span className="text-white text-3xl font-bold">IC</span>
-          </div>
+          <img 
+            src="/images/indabacarelogo.jpg" 
+            alt="Indaba Care Logo" 
+            className="w-24 h-24 object-contain rounded-full"
+          />
         </div>
         
         <h1 className="text-3xl font-bold text-[#4D4D4D] text-center mb-2">
@@ -70,7 +179,7 @@ export default function AuthPage() {
       if (email && password) {
         localStorage.setItem('indaba_logged_in', 'true');
         localStorage.setItem('indaba_user_name', 'Guest');
-        // Show splash screen then go to home
+        // Show splash screen after successful login
         setCurrentStep('splash');
       } else {
         alert('Please enter email and password');
@@ -91,6 +200,15 @@ export default function AuthPage() {
         
         <div className="flex-1 flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md">
+            {/* Added logo at the top of the login screen */}
+            <div className="flex justify-center mb-8">
+              <img 
+                src="/images/indabacarelogo.jpg" 
+                alt="Indaba Care Logo" 
+                className="w-24 h-24 object-contain rounded-full"
+              />
+            </div>
+            
             <form onSubmit={handleLogin} className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-[#4D4D4D] font-semibold mb-2">Email</label>
@@ -98,7 +216,7 @@ export default function AuthPage() {
                   id="email"
                   name="email"
                   type="email"
-                  defaultValue=""
+                  defaultValue="guest@indabacare.com"
                   className="w-full p-4 border border-gray-300 rounded-xl focus:border-[#FF6B6B] focus:outline-none transition-colors"
                   placeholder="guest@indabacare.com"
                   autoComplete="email"
@@ -113,7 +231,7 @@ export default function AuthPage() {
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
-                    defaultValue=""
+                    defaultValue="indabacare"
                     className="w-full p-4 border border-gray-300 rounded-xl focus:border-[#FF6B6B] focus:outline-none pr-12 transition-colors"
                     placeholder="indabacare"
                     autoComplete="current-password"
@@ -292,7 +410,7 @@ export default function AuthPage() {
     const handleProfileComplete = (e: React.FormEvent) => {
       e.preventDefault();
       localStorage.setItem('indaba_profile_complete', 'true');
-      // Show splash screen then go to home
+      // Show splash and then go to home
       setCurrentStep('splash');
     };
 
@@ -419,78 +537,14 @@ export default function AuthPage() {
     );
   };
 
-  // Simple splash screen component (temporary until merge with main)
-  const SplashStep = () => (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#2D2D2D] z-50">
-      <div className="flex flex-col items-center animate-fade-in">
-        <div className="mb-6">
-          <div className="w-32 h-32 bg-[#FF6B6B] rounded-full flex items-center justify-center animate-scale-up">
-            <span className="text-white text-4xl font-bold">IC</span>
-          </div>
-        </div>
-        
-        <h1 className="text-3xl font-bold text-white mb-2 animate-slide-up">
-          Indaba Care
-        </h1>
-        
-        <p className="text-[#FF6B6B] text-lg animate-slide-up-delay">
-          Transforming Childcare, Together.
-        </p>
-        
-        <div className="mt-12 w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
-          <div className="h-full bg-[#FF6B6B] animate-loading-bar"></div>
-        </div>
-      </div>
-      
-      <style jsx>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes scale-up {
-          from { transform: scale(0.8); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        
-        @keyframes slide-up {
-          from { transform: translateY(20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        
-        @keyframes loading-bar {
-          from { width: 0%; }
-          to { width: 100%; }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
-        }
-        
-        .animate-scale-up {
-          animation: scale-up 0.5s ease-out;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 0.5s ease-out 0.3s both;
-        }
-        
-        .animate-slide-up-delay {
-          animation: slide-up 0.5s ease-out 0.6s both;
-        }
-        
-        .animate-loading-bar {
-          animation: loading-bar 2.5s ease-in-out both;
-        }
-      `}</style>
-      
-      {/* Auto redirect after animation */}
-      {setTimeout(() => router.push('/home'), 3000)}
-    </div>
-  );
-
   const renderCurrentStep = () => {
+    if (isInitialRender) {
+      return <LoginScreen />;
+    }
+
     switch (currentStep) {
+      case 'splash':
+        return <SplashScreen onComplete={() => router.push('/home')} />;
       case 'welcome':
         return <WelcomeScreen />;
       case 'login':
@@ -499,10 +553,8 @@ export default function AuthPage() {
         return <SignupScreen />;
       case 'profile-setup':
         return <ProfileSetupScreen />;
-      case 'splash':
-        return <SplashStep />;
       default:
-        return <WelcomeScreen />;
+        return <LoginScreen />;
     }
   };
 
