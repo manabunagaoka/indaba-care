@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import AppShell from '../../components/AppShell';
 
-// Last updated: 2025-06-11 12:56:11 by manabunagaoka
+// Last updated: 2025-06-11 21:58:36 by manabunagaoka
 export default function LearningLayout({ children }) {
   const pathname = usePathname();
   const prevPathRef = useRef(pathname);
@@ -23,7 +23,7 @@ export default function LearningLayout({ children }) {
   // Define slide variants based on current direction
   const slideVariants = {
     initial: (custom) => ({
-      position: "absolute", // Position absolutely to prevent layout shift
+      position: "absolute",
       width: "100%",
       height: "100%",
       x: custom ? '100%' : '-100%',
@@ -64,7 +64,7 @@ export default function LearningLayout({ children }) {
             exit="exit"
             variants={slideVariants}
             custom={isForward}
-            className="absolute top-0 left-0 w-full h-full"
+            className="absolute top-0 left-0 w-full h-full bg-gray-50"
           >
             {children}
           </motion.div>
