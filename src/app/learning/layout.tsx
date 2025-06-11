@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Home, BookOpen, Play, Settings } from 'lucide-react';
 
-// Last updated: 2025-06-11 22:31:23 by manabunagaoka
+// Last updated: 2025-06-11 22:56:50 by manabunagaoka
 
 // Define Indaba Care color palette
 const COLORS = {
@@ -40,17 +40,26 @@ export default function LearningLayout({ children }) {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Content Area - Absolutely No Animation */}
-      <div className="flex-1 overflow-auto">
+    <div className="flex flex-col h-screen max-h-screen overflow-hidden">
+      {/* Content Area - With padding at bottom to prevent content being hidden behind nav */}
+      <div className="flex-1 overflow-auto pb-16">
         {children}
       </div>
       
-      {/* Bottom Navigation */}
-      <div className="bg-[#4D4D4D] flex w-full shadow-lg">
+      {/* Bottom Navigation - Fixed for Mobile */}
+      <div 
+        className="bg-[#4D4D4D] flex w-full shadow-lg h-16 border-t border-gray-700"
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50
+        }}
+      >
         {/* Messages Button */}
         <button 
-          className="flex flex-col items-center justify-center flex-1 py-3"
+          className="flex flex-col items-center justify-center flex-1 py-3 active:bg-[#3D3D3D]"
           onClick={() => navigateToTab('messages')}
         >
           <Home 
@@ -67,7 +76,7 @@ export default function LearningLayout({ children }) {
         
         {/* Resources Button */}
         <button 
-          className="flex flex-col items-center justify-center flex-1 py-3"
+          className="flex flex-col items-center justify-center flex-1 py-3 active:bg-[#3D3D3D]"
           onClick={() => navigateToTab('resources')}
         >
           <Play 
@@ -84,7 +93,7 @@ export default function LearningLayout({ children }) {
         
         {/* Learning Button */}
         <button 
-          className="flex flex-col items-center justify-center flex-1 py-3"
+          className="flex flex-col items-center justify-center flex-1 py-3 active:bg-[#3D3D3D]"
           onClick={() => navigateToTab('learning')}
         >
           <BookOpen 
@@ -101,7 +110,7 @@ export default function LearningLayout({ children }) {
         
         {/* Hub Button */}
         <button 
-          className="flex flex-col items-center justify-center flex-1 py-3"
+          className="flex flex-col items-center justify-center flex-1 py-3 active:bg-[#3D3D3D]"
           onClick={() => navigateToTab('hub')}
         >
           <Settings 
