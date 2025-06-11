@@ -2,6 +2,6 @@
 
 import AppShell from '../../components/AppShell';
 
-export default function ResourcesLayout({ children }) {
+export default function MessagesLayout({ children }) {
   return <AppShell>{children}</AppShell>;
 }

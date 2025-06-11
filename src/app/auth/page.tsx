@@ -410,7 +410,7 @@ export default function AuthPage() {
     const handleProfileComplete = (e: React.FormEvent) => {
       e.preventDefault();
       localStorage.setItem('indaba_profile_complete', 'true');
-      // Show splash and then go to home
+      // Show splash and then go to messages
       setCurrentStep('splash');
     };
 
@@ -544,7 +544,7 @@ export default function AuthPage() {
 
     switch (currentStep) {
       case 'splash':
-        return <SplashScreen onComplete={() => router.push('/home')} />;
+        return <SplashScreen onComplete={() => router.push('/messages')} />;
       case 'welcome':
         return <WelcomeScreen />;
       case 'login':

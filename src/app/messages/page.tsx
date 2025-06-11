@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState, useRef, ChangeEvent, MouseEvent } from 'react';
-import { Mic, Camera, Send, X, Plus, User, Home, BookOpen, Play, Calendar, Bell, Video, LogOut } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React, { useState, useRef, ChangeEvent, MouseEvent, useEffect } from 'react';
+import { Mic, Camera, Send, X, Plus, Home, BookOpen, Play, Calendar, Bell, Video, LogOut, Settings, User } from 'lucide-react';
 import UserMenu from '../../components/UserMenu';
 
 // Post types
@@ -65,7 +63,7 @@ const COLORS = {
   sunshineYellow: "#FFD166",
   
   // Additional Colors
-  purple: "#9B59B6",
+  hubPurple: "#9B59B6",
   lightPurple: "#D2B4DE",
   lightBlue: "#D6EAF8",
   lightGreen: "#ABEBC6",
@@ -198,7 +196,7 @@ const sampleScheduleData: ScheduleEvent[] = [
     start: "10:00 AM",
     end: "11:30 AM",
     day: "May 21",
-    color: COLORS.purple
+    color: COLORS.hubPurple
   }
 ];
 
@@ -226,7 +224,7 @@ const sampleMilestones: Milestone[] = [
     description: "Sophia is sharing toys with other children",
     date: "May 10, 2025",
     category: "Social-Emotional",
-    color: COLORS.purple
+    color: COLORS.hubPurple
   },
   {
     id: 4,
@@ -238,7 +236,7 @@ const sampleMilestones: Milestone[] = [
   }
 ];
 
-export default function HomePage() {
+export default function MessagesPage() {
   // Separate states for different modals and functionality
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isScheduleOpen, setIsScheduleOpen] = useState<boolean>(false);
@@ -253,7 +251,7 @@ export default function HomePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   
-  const currentTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  const currentPostTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
   // Get avatar background color based on user type
   const getAvatarStyle = (type: PostType): React.CSSProperties => {
@@ -285,7 +283,7 @@ export default function HomePage() {
       case 'subscription':
         return COLORS.brightTeal;
       case 'employer':
-        return COLORS.purple;
+        return COLORS.hubPurple;
       default:
         return COLORS.coralRed;
     }
@@ -343,7 +341,7 @@ export default function HomePage() {
       const newFeedItem: Post = {
         id: feed.length + 1,
         text: newPost.text,
-        timestamp: currentTime,
+        timestamp: currentPostTime,
         images: newPost.images,
         videos: newPost.videos,
         user: "Guest",
@@ -395,7 +393,7 @@ export default function HomePage() {
       case 'employer':
         return {
           backgroundColor: '#F5F0FA',
-          borderLeft: `4px solid ${COLORS.purple}`
+          borderLeft: `4px solid ${COLORS.hubPurple}`
         };
       default:
         return {
@@ -414,21 +412,8 @@ export default function HomePage() {
     borderBottom: `1px solid ${COLORS.coralRed}`
   };
 
-  const navStyle: React.CSSProperties = {
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: COLORS.darkGray,
-    display: 'flex',
-    justifyContent: 'space-around',
-    padding: '0.75rem 1rem',
-    boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.1)',
-    zIndex: 10
-  };
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f9fafb' }}>
+    <>
       {/* Header - White with Coral Red accents */}
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -448,7 +433,7 @@ export default function HomePage() {
       </div>
       
       {/* Content - Simplified Feed */}
-      <div style={{ flex: 1, overflowY: 'auto', paddingBottom: '6rem' }}>
+      <div>
         {/* New Post Editor (if editing) */}
         {isEditing && (
           <div style={{ backgroundColor: 'white', padding: '1rem', marginBottom: '1rem', borderBottom: '1px solid #e5e7eb' }}>
@@ -696,7 +681,7 @@ export default function HomePage() {
             width: '3.5rem',
             height: '3.5rem',
             borderRadius: '9999px',
-            backgroundColor: COLORS.purple,
+            backgroundColor: COLORS.hubPurple,
             color: 'white',
             display: 'flex',
             alignItems: 'center',
@@ -977,7 +962,7 @@ export default function HomePage() {
           backgroundColor: 'rgba(0, 0, 0, 0.5)' 
         }}>
           <div style={{ backgroundColor: 'white', width: '91.666667%', maxWidth: '28rem', borderRadius: '0.5rem', overflow: 'hidden' }}>
-            <div style={{ backgroundColor: COLORS.purple, padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ backgroundColor: COLORS.hubPurple, padding: '1rem', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ fontWeight: '500' }}>Development Journey</h3>
               <button 
                 onClick={() => setIsMilestonesOpen(false)}
@@ -1026,7 +1011,7 @@ export default function HomePage() {
               <button 
                 style={{ 
                   width: '100%', 
-                  backgroundColor: COLORS.purple, 
+                  backgroundColor: COLORS.hubPurple, 
                   color: 'white', 
                   padding: '0.5rem 0', 
                   borderRadius: '0.5rem', 
@@ -1043,22 +1028,9 @@ export default function HomePage() {
           </div>
         </div>
       )}
-
-      {/* Fixed Bottom Navigation */}
-      <nav style={navStyle}>
-        <Link href="/home" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
-          <Home size={20} style={{ color: COLORS.coralRed }} />
-          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: 'white' }}>Home</span>
-        </Link>
-        <Link href="/fun" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
-          <Play size={20} style={{ color: '#d1d5db' }} />
-          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#d1d5db' }}>Fun</span>
-        </Link>
-        <Link href="/resources" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textDecoration: 'none' }}>
-          <BookOpen size={20} style={{ color: '#d1d5db' }} />
-          <span style={{ fontSize: '0.75rem', marginTop: '0.25rem', color: '#d1d5db' }}>Resources</span>
-        </Link>
-      </nav>
-    </div>
+      
+      {/* The bottom navigation has been REMOVED */}
+      {/* It's now provided by AppShell in the layout */}
+    </>
   );
 }

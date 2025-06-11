@@ -1,218 +1,259 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
-import { Search, Home, BookOpen, Play } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { CourseCard } from '../../components/CourseCard';
+import { Tag, Search, Filter, ChevronDown } from 'lucide-react';
 import UserMenu from '../../components/UserMenu';
 
-export default function ResourcesCatalogPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const router = useRouter();
+// Types
+type Activity = {
+  id: number
+  title: string
+  description: string
+  ageRange: string
+  category: string
+  duration: string
+  materials: string[]
+  image: string
+}
 
-  const handleCardClick = (path: string) => {
-    router.push(path);
-  };
+// Sample activities data with correct image paths
+const activitiesData: Activity[] = [
+  {
+    id: 1,
+    title: "Pouring Station",
+    description: "Set up a pouring station with different sized containers and water or rice. This helps children develop fine motor skills, concentration, and hand-eye coordination.",
+    ageRange: "2-4 years",
+    category: "Practical Life",
+    duration: "15-30 minutes",
+    materials: ["Various containers", "Pitcher", "Tray", "Towel", "Water or rice"],
+    image: "/images/activities/pouring_station.jpg"
+  },
+  {
+    id: 2,
+    title: "Sensory Sound Bottles",
+    description: "Create bottles filled with different materials to produce various sounds. Children can match sounds, order by volume, or simply explore the auditory experience.",
+    ageRange: "1-3 years",
+    category: "Sensorial",
+    duration: "20-30 minutes",
+    materials: ["Clear bottles", "Various filling materials", "Glue for sealing"],
+    image: "/images/activities/sound_bottles.jpg"
+  },
+  {
+    id: 3,
+    title: "Nature Scavenger Hunt",
+    description: "Create a simple scavenger hunt in your yard or local park. Look for items like specific leaves, rocks, flowers, or insects to encourage observation skills.",
+    ageRange: "3-6 years",
+    category: "Cultural",
+    duration: "30-45 minutes",
+    materials: ["Small basket or bag", "Picture checklist", "Magnifying glass (optional)"],
+    image: "/images/activities/nature_hunt.jpg"
+  },
+  {
+    id: 4,
+    title: "Number Rod Counting",
+    description: "Use rods of increasing length to introduce counting and numerical concepts. This visual and tactile approach helps children understand quantities.",
+    ageRange: "3-5 years",
+    category: "Mathematics",
+    duration: "15-20 minutes",
+    materials: ["Montessori number rods or homemade equivalent", "Number cards"],
+    image: "/images/activities/number_rods.jpg"
+  },
+  {
+    id: 5,
+    title: "Vegetable Washing & Preparation",
+    description: "Let children wash and help prepare vegetables for a meal. This activity promotes independence, practical skills, and healthy eating habits.",
+    ageRange: "2-6 years",
+    category: "Practical Life",
+    duration: "20-30 minutes",
+    materials: ["Child-safe knife", "Vegetables", "Small bowl", "Water", "Towel"],
+    image: "/images/activities/vegetable_washing.jpg"
+  },
+  {
+    id: 6,
+    title: "Sandpaper Letters",
+    description: "Introduce alphabet letters through touch by using sandpaper letters. This multi-sensory approach helps with letter recognition and phonetic sounds.",
+    ageRange: "3-5 years",
+    category: "Language",
+    duration: "10-15 minutes",
+    materials: ["Sandpaper letters", "Tray"],
+    image: "/images/activities/sandpaper_letters.jpg"
+  }
+];
 
-  // Course catalog data with icons
-  const courses = [
-    {
-      id: 'montessori',
-      title: 'Montessori Developmental Milestones',
-      description: 'Learn about child development through the Montessori lens with comprehensive milestone categories and practical implementation guides.',
-      bgColor: 'bg-gradient-to-r from-[#4D4D4D] to-[#757575]',
-      lessonCount: 7,
-      isPremium: true,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="#4D4D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 2V22" stroke="#4D4D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M3 7L21 17" stroke="#4D4D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M21 7L3 17" stroke="#4D4D4D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      )
-    },
-    {
-      id: 'nutrition',
-      title: 'Nutrition & Meal Preparation',
-      description: 'Practical guidance for preparing nutritious, age-appropriate meals and fostering healthy eating habits in children.',
-      bgColor: 'bg-gradient-to-r from-[#FF6B6B] to-[#FFBCAB]',
-      lessonCount: 5,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M18 8H19C20.1046 8 21 8.89543 21 10V21M18 8H6M18 8V21M6 8H5C3.89543 8 3 8.89543 3 10V21M6 8V21M3 21H21M6 21H18" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M12 8V6M12 6V4M12 6H9M12 6H15" stroke="#FF6B6B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      )
-    },
-    {
-      id: 'earth-stewardship',
-      title: 'Earth Stewardship',
-      description: 'Guide children to develop a meaningful connection with nature and learn sustainable practices through hands-on activities.',
-      bgColor: 'bg-gradient-to-r from-[#40BFBF] to-[#ABEBC6]',
-      lessonCount: 4,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" stroke="#40BFBF" strokeWidth="2"/>
-          <path d="M12 2C13.3132 3.90042 14 6.36521 14 9C14 11.6348 13.3132 14.0996 12 16M12 2C10.6868 3.90042 10 6.36521 10 9C10 11.6348 10.6868 14.0996 12 16M12 2C6.47715 2 2 6.47715 2 12M12 2C17.5228 2 22 6.47715 22 12M12 16C6.47715 16 2 19.5 2 12M12 16C17.5228 16 22 19.5 22 12M2 12H22" stroke="#40BFBF" strokeWidth="2"/>
-        </svg>
-      )
-    },
-    {
-      id: 'professional-development',
-      title: 'Nanny Professional Development',
-      description: 'Enhance your skills as a childcare provider with professional guidelines, communication strategies, and career advancement tools.',
-      bgColor: 'bg-gradient-to-r from-[#9B59B6] to-[#D2B4DE]',
-      lessonCount: 6,
-      isPremium: true,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 15C15.866 15 19 11.866 19 8V0H5V8C5 11.866 8.13401 15 12 15Z" stroke="#9B59B6" strokeWidth="2"/>
-          <path d="M19 4H21C21.5523 4 22 4.44772 22 5V7C22 9.76142 19.7614 12 17 12H12" stroke="#9B59B6" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M5 4H3C2.44772 4 2 4.44772 2 5V7C2 9.76142 4.23858 12 7 12H12" stroke="#9B59B6" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M12 15V17" stroke="#9B59B6" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M9 21H15" stroke="#9B59B6" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M9 17H15" stroke="#9B59B6" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      )
-    },
-    {
-      id: 'sleep-toileting',
-      title: 'Sleep & Toileting Guide',
-      description: 'Evidence-based approaches for supporting healthy sleep habits and developmentally appropriate toileting independence.',
-      bgColor: 'bg-gradient-to-r from-[#D99B9B] to-[#FFD6CC]',
-      lessonCount: 3,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M3 11H21M3 11C3 15.4183 6.58172 19 11 19H13C17.4183 19 21 15.4183 21 11M3 11V9C3 7.89543 3.89543 7 5 7H19C20.1046 7 21 7.89543 21 9V11" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M12 19V22" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M8 22H16" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M18 2L14 6" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-          <path d="M2 6H8" stroke="#D99B9B" strokeWidth="2" strokeLinecap="round"/>
-        </svg>
-      )
-    },
-    {
-      id: 'time-management',
-      title: 'Time Management for Caregivers',
-      description: 'Strategies to effectively balance childcare responsibilities, household management, and personal well-being.',
-      bgColor: 'bg-gradient-to-r from-[#FFD166] to-[#FFBCAB]',
-      lessonCount: 4,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="10" stroke="#FFD166" strokeWidth="2"/>
-          <path d="M12 6V12L16 14" stroke="#FFD166" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      )
-    },
-    {
-      id: 'observation',
-      title: 'Observation Workshop',
-      description: 'Learn to observe children objectively, document development, and use observations to support individual growth.',
-      bgColor: 'bg-gradient-to-r from-[#40BFBF] to-[#D6EAF8]',
-      lessonCount: 3,
-      icon: (
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="3" stroke="#40BFBF" strokeWidth="2"/>
-          <path d="M20.188 10.9343C20.5762 11.4056 20.7703 11.6412 20.7703 12C20.7703 12.3588 20.5762 12.5944 20.188 13.0657C18.7679 14.7899 15.6357 18 12 18C8.36427 18 5.23206 14.7899 3.81197 13.0657C3.42381 12.5944 3.22973 12.3588 3.22973 12C3.22973 11.6412 3.42381 11.4056 3.81197 10.9343C5.23206 9.21014 8.36427 6 12 6C15.6357 6 18.7679 9.21014 20.188 10.9343Z" stroke="#40BFBF" strokeWidth="2"/>
-        </svg>
-      )
+// Define color for resources section
+const COLORS = {
+  brightTeal: "#40BFBF",  // Resources color
+};
+
+export default function ResourcesPage() {
+  const [activities, setActivities] = useState(activitiesData)
+  const [selectedCategory, setSelectedCategory] = useState("")
+  const [selectedAge, setSelectedAge] = useState("")
+  const [showFilters, setShowFilters] = useState(false)
+  
+  // Filter activities based on selected category and age
+  const filteredActivities = activities.filter(activity => {
+    if (selectedCategory && activity.category !== selectedCategory) return false;
+    if (selectedAge) {
+      // Simple age filtering logic - would be more sophisticated in a real app
+      if (selectedAge === "0-2" && !activity.ageRange.includes("1") && !activity.ageRange.includes("2")) return false;
+      if (selectedAge === "3-4" && !activity.ageRange.includes("3") && !activity.ageRange.includes("4")) return false;
+      if (selectedAge === "5-6" && !activity.ageRange.includes("5") && !activity.ageRange.includes("6")) return false;
     }
-  ];
+    return true;
+  });
 
-  // Filter courses based on search term
-  const filteredCourses = courses.filter(course => 
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    course.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const categories = ["Practical Life", "Sensorial", "Language", "Mathematics", "Cultural"];
+  const ageRanges = ["0-2", "3-4", "5-6"];
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white p-4 flex justify-between items-center shadow-sm border-b border-[#FFD166]">
+    <>
+      {/* Header with logo and user menu */}
+      <div className="bg-white p-4 flex justify-between items-center border-b">
         <div className="flex items-center">
-          <div className="h-10 w-auto mr-3 rounded-md overflow-hidden relative">
+          <div className="h-12 w-auto mr-3 flex items-center">
             <img 
               src="/images/indabacarelogo.jpg" 
               alt="Indaba Care Logo" 
               className="h-10 w-auto object-contain" 
-              onError={(e) => e.currentTarget.src = "/api/placeholder/50/50"} 
             />
+            <h1 className="font-bold text-2xl text-[#4D4D4D] ml-2">Indaba Care</h1>
           </div>
-          <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
         </div>
         <UserMenu />
       </div>
 
-      {/* Page Header with Search */}
-      <div className="bg-white p-4 border-b flex justify-between items-center">
-        <h1 className="text-xl font-bold text-[#4D4D4D]">Learning Resources</h1>
-        
-        <div className="relative w-64">
+      {/* Title and Search */}
+      <div className="p-4 bg-white border-b flex flex-wrap justify-between items-center">
+        <h2 className="text-3xl font-bold text-[#4D4D4D]">Fun Activities</h2>
+        <div className="relative flex-grow max-w-md ml-4">
           <input
             type="text"
-            placeholder="Search courses..."
-            className="w-full py-1.5 pl-8 pr-3 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#FFD166] text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search activities..."
+            className="w-full py-2 pl-10 pr-4 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-[#40BFBF]"
           />
-          <Search className="absolute left-2.5 top-2 text-gray-400" size={16} />
+          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
         </div>
       </div>
 
-      {/* Courses Grid */}
-      <div className="flex-1 overflow-auto pb-20 px-4 pt-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredCourses.map((course) => (
-            <div key={course.id}>
-              <CourseCard
-                title={course.title}
-                description={course.description}
-                icon={course.icon}
-                bgColor={course.bgColor}
-                href={`/resources/${course.id}`}
-                lessonCount={course.lessonCount}
-                isPremium={course.isPremium}
-                onClick={() => handleCardClick(`/resources/${course.id}`)}
-              />
+      {/* Filter button and dropdown */}
+      <div className="py-2 px-4 bg-white border-b">
+        <div className="relative">
+          <button 
+            className="flex items-center py-1 px-3 bg-gray-100 rounded-full text-sm"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <Filter size={14} className="text-gray-500 mr-1" />
+            <span className="text-gray-500">Filter</span>
+            <ChevronDown size={16} className="ml-1 text-gray-500" />
+          </button>
+          
+          {showFilters && (
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4 z-10">
+              <div className="mb-4">
+                <h3 className="font-medium text-sm mb-2 text-gray-700">Category:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map(category => (
+                    <button
+                      key={category}
+                      className={`py-1 px-3 rounded-full text-xs ${
+                        selectedCategory === category 
+                          ? 'bg-[#40BFBF] text-white' 
+                          : 'bg-gray-100 text-gray-500'
+                      }`}
+                      onClick={() => setSelectedCategory(selectedCategory === category ? "" : category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="font-medium text-sm mb-2 text-gray-700">Age Range:</h3>
+                <div className="flex flex-wrap gap-2">
+                  {ageRanges.map(age => (
+                    <button
+                      key={age}
+                      className={`py-1 px-3 rounded-full text-xs ${
+                        selectedAge === age 
+                          ? 'bg-[#40BFBF] text-white' 
+                          : 'bg-gray-100 text-gray-500'
+                      }`}
+                      onClick={() => setSelectedAge(selectedAge === age ? "" : age)}
+                    >
+                      {age} years
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Activities List */}
+      <div className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredActivities.map(activity => (
+            <div 
+              key={activity.id} 
+              className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100"
+            >
+              <div className="w-full h-80 bg-gray-200">
+                <img 
+                  src={activity.image} 
+                  alt={activity.title} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => e.currentTarget.src = "/api/placeholder/300/200"}
+                />
+              </div>
+              
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-lg text-[#4D4D4D]">{activity.title}</h3>
+                  <span className="bg-[#40BFBF] bg-opacity-20 text-[#40BFBF] text-xs px-2 py-0.5 rounded">
+                    {activity.ageRange}
+                  </span>
+                </div>
+                
+                <p className="text-gray-600 text-sm mb-3">
+                  {activity.description}
+                </p>
+                
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <span className="bg-gray-100 px-2 py-0.5 rounded text-xs text-gray-600 flex items-center">
+                    <Tag size={12} className="mr-1" />
+                    {activity.category}
+                  </span>
+                  <span className="bg-gray-100 px-2 py-0.5 rounded text-xs text-gray-600">
+                    {activity.duration}
+                  </span>
+                </div>
+                
+                <div className="mb-3">
+                  <h4 className="text-xs font-semibold text-gray-500 mb-1">Materials needed:</h4>
+                  <ul className="text-xs text-gray-600 pl-4 list-disc">
+                    {activity.materials.map((material, idx) => (
+                      <li key={idx}>{material}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <button 
+                  className="w-full mt-2 py-2 bg-gray-300 text-gray-600 rounded-lg font-medium text-sm cursor-not-allowed opacity-70"
+                  disabled={true}
+                >
+                  View Details (Coming Soon)
+                </button>
+              </div>
             </div>
           ))}
         </div>
-        
-        {filteredCourses.length === 0 && (
-          <div className="text-center py-10">
-            <p className="text-gray-500">No courses found matching "{searchTerm}"</p>
-          </div>
-        )}
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => {
-            sessionStorage.setItem('majorTabSwitch', 'true');
-            router.push('/home');
-          }}
-        >
-          <Home size={20} />
-          <span className="text-xs mt-1">Home</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => {
-            sessionStorage.setItem('majorTabSwitch', 'true');
-            router.push('/fun');
-          }}
-        >
-          <Play size={20} />
-          <span className="text-xs mt-1">Fun</span>
-        </button>
-        <button className="flex flex-col items-center">
-          <BookOpen size={20} className="text-[#FFD166]" />
-          <span className="text-xs mt-1 text-white">Resources</span>
-        </button>
-      </div>
-    </div>
+      {/* Bottom Navigation has been REMOVED */}
+      {/* It's now provided by AppShell in the layout */}
+    </>
   );
 }

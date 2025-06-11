@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, User, ChevronDown, ChevronUp, ArrowLeft, Home, BookOpen, Play } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import UserMenu from '../../../components/UserMenu';
 
+// Last updated by manabunagaoka: 2025-06-11 12:47:51
 const MilestoneBadge = ({ type, title, description, age, isExpanded, onToggle }) => {
   const backgrounds = {
     'practical-life': 'bg-gradient-to-r from-[#FF6B6B] to-[#FFBCAB]',
@@ -264,8 +266,15 @@ export default function MontessoriPage() {
   // Using a Set to track multiple expanded categories
   const [expandedCategories, setExpandedCategories] = useState(new Set(['practical-life']));
   const router = useRouter();
-  const currentUser = 'manabunagaoka';
-  const currentTime = '2025-05-19 01:16:48';
+  
+  // Define COLORS for consistent use throughout the component
+  const COLORS = {
+    darkGray: "#4D4D4D",
+    coralRed: "#FF6B6B",
+    resourcesTeal: "#40BFBF",
+    highlight: "#FFD166",
+    hubPurple: "#9B59B6"
+  };
   
   // Toggle specific category without affecting others
   const toggleCategory = (category) => {
@@ -289,6 +298,20 @@ export default function MontessoriPage() {
     
     // Update state
     setExpandedCategories(newExpanded);
+  };
+
+  // Handle back navigation with transition
+  const handleBackToLearning = (e) => {
+    if (e) e.preventDefault();
+    
+    // Set the direction to back before navigating
+    localStorage.setItem('pageTransitionDirection', 'back');
+    console.log('Setting direction to back');
+    
+    // Add a small delay to ensure localStorage is set
+    setTimeout(() => {
+      router.push('/learning');
+    }, 50);
   };
 
   // Montessori developmental areas - reordered as per request
@@ -335,18 +358,16 @@ export default function MontessoriPage() {
           </div>
           <h1 className="font-bold text-xl text-[#4D4D4D]">Indaba Care</h1>
         </div>
-        <div className="flex items-center">
-          <User size={20} className="mr-2 text-[#4D4D4D]" />
-          <span className="text-[#4D4D4D]">{currentUser}</span>
-        </div>
+        <UserMenu />
       </div>
 
       {/* Page Header with Search - Condensed to save space */}
       <div className="bg-white p-4 border-b flex justify-between items-center">
         <div className="flex items-center">
           <button
-            onClick={() => router.push('/resources')}
+            onClick={handleBackToLearning}
             className="mr-2 text-gray-500 hover:text-[#4D4D4D] transition-colors"
+            aria-label="Back to learning resources"
           >
             <ArrowLeft size={20} />
           </button>
@@ -383,37 +404,6 @@ export default function MontessoriPage() {
         <div className="text-center text-xs text-gray-500 mt-4 mb-8">
           Remember that each child develops at their own pace. These milestones serve as guides rather than rigid expectations.
         </div>
-      </div>
-
-      {/* Bottom Navigation - Simple static version without animation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#4D4D4D] flex justify-around py-3 px-4 shadow-lg">
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => {
-            sessionStorage.setItem('majorTabSwitch', 'true');
-            router.push('/home');
-          }}
-        >
-          <Home size={20} />
-          <span className="text-xs mt-1">Home</span>
-        </button>
-        <button 
-          className="flex flex-col items-center text-gray-300"
-          onClick={() => {
-            sessionStorage.setItem('majorTabSwitch', 'true');
-            router.push('/fun');
-          }}
-        >
-          <Play size={20} />
-          <span className="text-xs mt-1">Fun</span>
-        </button>
-        <button 
-          className="flex flex-col items-center"
-          onClick={() => router.push('/resources')}
-        >
-          <BookOpen size={20} className="text-[#FFD166]" />
-          <span className="text-xs mt-1 text-white">Resources</span>
-        </button>
       </div>
     </div>
   );
