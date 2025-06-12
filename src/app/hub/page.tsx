@@ -5,7 +5,7 @@ import { Search, Calendar, BookOpen, Plus, Home, Play, Settings, MessageCircle, 
 import { useRouter, usePathname } from 'next/navigation';
 import UserMenu from '../../components/UserMenu';
 
-// Last updated by manabunagaoka: 2025-06-12 13:28:10
+// Last updated by manabunagaoka: 2025-06-12 21:28:33
 
 // Define Indaba Care color palette
 const COLORS = {
@@ -41,10 +41,24 @@ function AppButton({
   );
 }
 
-// ChatGPT Icon
-const ChatGPTIcon = () => (
-  <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-    <div className="text-white font-bold text-lg">AI</div>
+// iCareGPT Icon (updated from ChatGPT)
+const ICareGPTIcon = () => (
+  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg p-1 overflow-hidden">
+    <div className="w-full h-full relative flex items-center justify-center">
+      <img 
+        src="/images/indabacarelogo.jpg" 
+        alt="iCareGPT Logo" 
+        className="w-full h-full object-contain rounded-xl" 
+        onError={(e) => {
+          // Fallback if image fails to load
+          e.currentTarget.style.display = 'none';
+          e.currentTarget.parentElement.innerHTML = '<div class="text-[#4D4D4D] font-bold text-lg">iCare</div>';
+        }}
+      />
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white/80 to-transparent text-center">
+        <span className="text-[8px] font-bold text-[#4D4D4D]">GPT</span>
+      </div>
+    </div>
   </div>
 );
 
@@ -468,7 +482,7 @@ export default function HubPage() {
     }
   };
 
-  // App definitions - UPDATED to only include specified apps
+  // App definitions - UPDATED with iCareGPT instead of ChatGPT and specific GPT link
   const apps = [
     {
       id: 'tracker',
@@ -490,11 +504,11 @@ export default function HubPage() {
       isExternal: false
     },
     {
-      id: 'chatgpt',
-      title: 'ChatGPT',
-      icon: <ChatGPTIcon />,
+      id: 'icaregpt',
+      title: 'iCareGPT',
+      icon: <ICareGPTIcon />,
       isExternal: true,
-      url: 'https://chat.openai.com'
+      url: 'https://chatgpt.com/g/g-684ad857b6348191b94e77d11040952f-icaregpt'
     },
     {
       id: 'add-app',
