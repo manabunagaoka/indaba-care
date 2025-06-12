@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Calendar, BookOpen, Plus, Home, Play, Settings, MessageCircle, Camera, Music, ShoppingBag, Zap, ArrowLeft, Clock, MapPin } from 'lucide-react';
+import { Search, Calendar, BookOpen, Plus, Home, Play, Settings, MessageCircle, Camera, Music, ShoppingBag, Zap, ArrowLeft, Clock, MapPin, BarChart2 } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import UserMenu from '../../components/UserMenu';
 
-// Last updated by manabunagaoka: 2025-06-11 14:05:10
+// Last updated by manabunagaoka: 2025-06-12 13:28:10
 
 // Define Indaba Care color palette
 const COLORS = {
@@ -41,48 +41,19 @@ function AppButton({
   );
 }
 
-// External app icons - filling the entire square
-const WhatsAppIcon = () => (
-  <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center shadow-lg">
-    <MessageCircle className="w-8 h-8 text-white" fill="currentColor" />
-  </div>
-);
-
-const InstagramIcon = () => (
-  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 rounded-2xl flex items-center justify-center shadow-lg relative">
-    <div className="w-10 h-10 border-2 border-white rounded-lg flex items-center justify-center">
-      <div className="w-3 h-3 bg-white rounded-full"></div>
-    </div>
-    <div className="absolute top-2 right-2 w-3 h-3 border-2 border-white rounded-full"></div>
-  </div>
-);
-
-const TikTokIcon = () => (
-  <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center shadow-lg relative">
-    <div className="relative">
-      <div className="w-4 h-6 bg-red-500 rounded-sm transform -rotate-12 absolute -left-1"></div>
-      <div className="w-4 h-6 bg-blue-400 rounded-sm transform rotate-12 absolute right-0 top-1"></div>
-      <div className="w-4 h-6 bg-white rounded-sm relative z-10"></div>
-    </div>
-  </div>
-);
-
-const FacebookIcon = () => (
-  <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-    <div className="text-white font-bold text-2xl">f</div>
-  </div>
-);
-
+// ChatGPT Icon
 const ChatGPTIcon = () => (
   <div className="w-14 h-14 bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
     <div className="text-white font-bold text-lg">AI</div>
   </div>
 );
 
-const AmazonIcon = () => (
-  <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg relative">
-    <div className="text-black font-bold text-xl">a</div>
-    <div className="absolute bottom-2 left-2 right-2 h-0.5 bg-orange-600 rounded-full"></div>
+// Tracker app icon
+const TrackerIcon = () => (
+  <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center">
+    <div className="p-2">
+      <BarChart2 className="w-8 h-8 text-white" strokeWidth={1.5} />
+    </div>
   </div>
 );
 
@@ -92,7 +63,7 @@ const CalendarIcon = () => (
     <div className="bg-red-500 h-3 w-full"></div>
     <div className="p-1">
       <div className="text-xs text-gray-600 text-center mb-1">JUN</div>
-      <div className="text-lg font-bold text-center text-black">11</div>
+      <div className="text-lg font-bold text-center text-black">12</div>
     </div>
     <div className="absolute top-1 left-3 w-1 h-4 bg-gray-400 rounded-full"></div>
     <div className="absolute top-1 right-3 w-1 h-4 bg-gray-400 rounded-full"></div>
@@ -177,7 +148,7 @@ function CalendarApp({ onBack }) {
       <div className="flex-1 overflow-auto p-4">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-800 mb-1">
-            Today's Schedule - June 11
+            Today's Schedule - June 12
           </h2>
           <p className="text-sm text-gray-600">{events.length} events planned</p>
         </div>
@@ -497,8 +468,15 @@ export default function HubPage() {
     }
   };
 
-  // App definitions
+  // App definitions - UPDATED to only include specified apps
   const apps = [
+    {
+      id: 'tracker',
+      title: 'Tracker',
+      icon: <TrackerIcon />,
+      isExternal: true,
+      url: 'https://manabunagaoka.com/indabacare/tracker.html'
+    },
     {
       id: 'calendar',
       title: 'Calendar',
@@ -512,46 +490,11 @@ export default function HubPage() {
       isExternal: false
     },
     {
-      id: 'whatsapp',
-      title: 'WhatsApp',
-      icon: <WhatsAppIcon />,
-      isExternal: true,
-      url: 'https://web.whatsapp.com'
-    },
-    {
-      id: 'instagram',
-      title: 'Instagram',
-      icon: <InstagramIcon />,
-      isExternal: true,
-      url: 'https://instagram.com'
-    },
-    {
-      id: 'tiktok',
-      title: 'TikTok',
-      icon: <TikTokIcon />,
-      isExternal: true,
-      url: 'https://tiktok.com'
-    },
-    {
-      id: 'facebook',
-      title: 'Facebook',
-      icon: <FacebookIcon />,
-      isExternal: true,
-      url: 'https://facebook.com'
-    },
-    {
       id: 'chatgpt',
       title: 'ChatGPT',
       icon: <ChatGPTIcon />,
       isExternal: true,
       url: 'https://chat.openai.com'
-    },
-    {
-      id: 'amazon',
-      title: 'Amazon',
-      icon: <AmazonIcon />,
-      isExternal: true,
-      url: 'https://amazon.com'
     },
     {
       id: 'add-app',
